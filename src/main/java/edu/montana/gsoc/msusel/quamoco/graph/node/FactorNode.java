@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +26,16 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.graph.MutableNetwork;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import lombok.Getter;
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 
 /**
  * Node representing a factor in the Quamoco processing graph. A
@@ -44,91 +43,81 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
  * but it is not a direct measure related to the product.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class FactorNode extends Node {
 
     /**
      * The method associated with aggregation.
      */
-    private String       method;
+    @Getter
+    private String method;
     /**
      * The set of all findings connected to this factor (via the graph)
      */
-    private Set<Finding> findings;
+    private List<Finding> findings;
 
     /**
      * Constructs a new Factor node in the given graph, with the given name, and
      * associated with the owner id in a Quality Model.
-     * 
-     * @param graph
-     *            Graph in which this factor will be located.
-     * @param name
-     *            Name of the factor
-     * @param owner
-     *            Id of the entity in a quality model this node represents.
+     *
+     * @param name  Name of the factor
+     * @param owner Id of the entity in a quality model this node represents.
      */
-    public FactorNode(final DirectedSparseGraph<Node, Edge> graph, final String name, final String owner)
-    {
+    public FactorNode(final String name, final String owner) {
+        this(null, name, owner);
+    }
+
+    public FactorNode(MutableNetwork<Node, Edge> graph, final String name, final String owner) {
         super(graph, name, owner);
         method = FactorMethod.MEAN;
-        findings = Sets.newHashSet();
-    }
-
-    /**
-     * @return The indication of the method for aggregation.
-     */
-    public String getMethod()
-    {
-        return method;
+        findings = Lists.newArrayList();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
-    {
+    public double getValue() {
         if (!calculated)
-        {
-            value = processor.process();
-        }
+            return processor.process();
+        else
+            return value;
+    }
 
-        calculated = true;
-        return value;
+    public double thresholdValue(double value) {
+        if (Double.compare(0.0, value) > 0)
+            return 0.0;
+        else if (Double.compare(1.0, value) < 0)
+            return 1.0;
+        else
+            return value;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getXMLTag()
-    {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(
-                String.format(
-                        "<nodes name=\"%s\" description=\"%s\" owner=\"%s\" type=\"FACTOR\">%n",
-                        StringEscapeUtils.escapeXml10(name), StringEscapeUtils.escapeXml10(description), ownedBy));
-        builder.append("\t</nodes>");
-        return builder.toString();
+    public String getXMLTag() {
+        return String.format(
+                "<nodes name=\"%s\" description=\"%s\" owner=\"%s\" type=\"FACTOR\">%n",
+                StringEscapeUtils.escapeXml10(name), StringEscapeUtils.escapeXml10(description), ownedBy) +
+                "\t</nodes>";
     }
 
     /**
      * Sets the method indicating how aggregation is performed.
-     * 
-     * @param method
-     *            The new method.
+     *
+     * @param method The new method.
      */
-    public void setMethod(final String method)
-    {
+    public void setMethod(final String method) {
         final List<String> methods = Lists.newArrayList();
         methods.add(FactorMethod.MANUAL);
         methods.add(FactorMethod.MEAN);
         methods.add(FactorMethod.ONE);
         methods.add(FactorMethod.RANKING);
 
-        if (method == null || method.isEmpty() || !methods.contains(method))
-        {
+        if (method == null || method.isEmpty() || !methods.contains(method)) {
             throw new IllegalArgumentException();
         }
 
@@ -139,45 +128,38 @@ public class FactorNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getLowerResult()
-    {
-        final List<BigDecimal> values = Lists.newArrayList();
-        for (final Edge e : graph.getInEdges(this))
-        {
-            final Node n = graph.getOpposite(this, e);
+    public double getLowerResult() {
+        final List<Double> values = Lists.newArrayList();
+        for (final Edge e : graph.inEdges(this)) {
+            final Node n = getOpposite(e);
             values.add(n.getValue());
         }
 
-        return values.isEmpty() ? BigDecimal.ZERO : Collections.min(values);
+        return values.isEmpty() ? 0.0 : Collections.min(values);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getUpperResult()
-    {
-        final List<BigDecimal> values = Lists.newArrayList();
-        for (final Edge e : graph.getInEdges(this))
-        {
-            final Node n = graph.getOpposite(this, e);
+    public double getUpperResult() {
+        final List<Double> values = Lists.newArrayList();
+        for (final Edge e : graph.inEdges(this)) {
+            final Node n = getOpposite(e);
             values.add(n.getValue());
         }
 
-        return values.isEmpty() ? BigDecimal.ONE : Collections.max(values);
+        return values.isEmpty() ? 1.0 : Collections.max(values);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Finding> getFindings()
-    {
-        if (findings == null || findings.isEmpty())
-        {
-            for (Edge edge : graph.getInEdges(this))
-            {
-                Node n = graph.getOpposite(this, edge);
+    public List<Finding> getFindings() {
+        if (findings == null || findings.isEmpty()) {
+            for (Edge edge : graph.inEdges(this)) {
+                Node n = getOpposite(edge);
                 findings.addAll(n.getFindings());
             }
         }

@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,24 +26,23 @@
  */
 package edu.montana.gsoc.msusel.quamoco.distiller;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-
+import com.google.common.graph.Network;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.WeightedRankedEdge;
 import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
+import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+
+import java.util.List;
 
 /**
  * This class is used to update the weights associated with the edges between
  * factors of a distilled quality model graph.
  * 
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class WeightUpdater {
 
@@ -59,11 +59,15 @@ public class WeightUpdater {
      * @param graph
      *            Distilled quality model processing graph to update
      */
-    public void updateWeights(DirectedSparseGraph<Node, Edge> graph)
+    public void updateWeights(Network<Node, Edge> graph)
     {
-        List<FactorNode> factors = getFactors(graph);
+        List<Node> nodes = getFactors(graph);
 
-        factors.forEach((factor) -> updateWeights(factor, graph));
+        nodes.forEach((factor) -> updateWeights(factor, graph));
+
+        nodes = getMeasures(graph);
+
+        nodes.forEach((measure) -> updateWeights(measure, graph));
     }
 
     /**
@@ -75,32 +79,62 @@ public class WeightUpdater {
      *            Distilled quality model processing graph
      */
     @VisibleForTesting
-    void updateWeights(FactorNode factor, DirectedSparseGraph<Node, Edge> graph)
+    void updateWeights(Node factor, Network<Node, Edge> graph)
     {
         List<WeightedRankedEdge> edges = getWeightedEdges(factor, graph);
 
-        BigDecimal highestRanking = BigDecimal.ZERO;
+        int highestRanking = 0;
         int numRankings = 0;
 
         for (WeightedRankedEdge edge : edges)
         {
-            if (edge.getRank().compareTo(BigDecimal.ZERO) > 0)
+            if (edge.getRank() > 0)
                 numRankings += 1;
-            if (edge.getRank().compareTo(highestRanking) > 0)
+            if (edge.getRank() > highestRanking)
                 highestRanking = edge.getRank();
         }
 
-        BigDecimal[] weights = new BigDecimal[edges.size()];
+        double[] weights = new double[numRankings + 1];
         for (int i = 1; i <= numRankings; i++)
         {
             double weight = 0.0;
             for (int j = i; j <= numRankings; j++)
             {
-                weight = weight + (1 / j);
+                weight += (1.0 / j);
             }
-            weights[i] = new BigDecimal(weight / numRankings);
+            weights[i] = weight / numRankings;
         }
 
+        int weightIndex = 1;
+        for (int i = 1; i <= highestRanking; i++) {
+            double weight = 0.0;
+            int usagesOfRanking = 0;
+            for (WeightedRankedEdge edge : edges) {
+                if (edge.getRank() == i)
+                    usagesOfRanking += 1;
+            }
+
+            if (usagesOfRanking > 0) {
+                for (int j = 1; j <= usagesOfRanking; j++) {
+                    weight += weights[weightIndex];
+                    weightIndex += 1;
+                }
+                weight /= (double) usagesOfRanking;
+
+                for (WeightedRankedEdge edge : edges) {
+                    if (edge.getRank() == i) {
+                        edge.setWeight(weight);
+                    }
+                }
+            }
+        }
+
+        for (WeightedRankedEdge edge : edges) {
+            if (edge.getRank() == 0) {
+                edge.setWeight(0.0);
+                edge.setMaxPoints(100.0);
+            }
+        }
     }
 
     /**
@@ -111,19 +145,19 @@ public class WeightUpdater {
      *            Factor whose edges are required
      * @param graph
      *            Distilled quality model processing graph
-     * @return List of incoming weighted ranked eges of the given factor node
+     * @return List of incoming weighted ranked edges of the given factor node
      */
     @VisibleForTesting
-    List<WeightedRankedEdge> getWeightedEdges(FactorNode factor, DirectedSparseGraph<Node, Edge> graph)
+    List<WeightedRankedEdge> getWeightedEdges(Node factor, Network<Node, Edge> graph)
     {
-        List<WeightedRankedEdge> edges = Lists.newLinkedList();
+        List<WeightedRankedEdge> edges = Lists.newArrayList();
 
-        graph.getInEdges(factor).forEach((edge) -> {
+        for (Edge edge : graph.inEdges(factor)) {
             if (edge instanceof WeightedRankedEdge)
             {
                 edges.add((WeightedRankedEdge) edge);
             }
-        });
+        }
 
         return edges;
     }
@@ -137,16 +171,27 @@ public class WeightUpdater {
      * @return List of factor nodes contained within the graph
      */
     @VisibleForTesting
-    List<FactorNode> getFactors(DirectedSparseGraph<Node, Edge> graph)
+    List<Node> getFactors(Network<Node, Edge> graph)
     {
-        List<FactorNode> factors = Lists.newLinkedList();
-        graph.getVertices().forEach((node) -> {
+        List<Node> factors = Lists.newArrayList();
+        for(Node node : graph.nodes()) {
             if (node instanceof FactorNode)
             {
-                factors.add((FactorNode) node);
+                factors.add(node);
             }
-        });
+        }
 
         return factors;
+    }
+
+    List<Node> getMeasures(Network<Node, Edge> graph) {
+        List<Node> measures = Lists.newArrayList();
+        for (Node node : graph.nodes()) {
+            if (node instanceof MeasureNode) {
+                measures.add(node);
+            }
+        }
+
+        return measures;
     }
 }

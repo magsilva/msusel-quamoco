@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,135 +24,120 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+/**
+ * 
+ */
 package edu.montana.gsoc.msusel.quamoco.distiller;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import edu.montana.gsoc.msusel.quamoco.distiller.DistillerData;
-import edu.montana.gsoc.msusel.quamoco.distiller.EdgePopulator;
-import edu.montana.gsoc.msusel.quamoco.distiller.NodePopulator;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Evaluates;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Evaluation;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Factor;
-import edu.montana.gsoc.msusel.quamoco.model.qm.FactorLink;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Influence;
-import edu.montana.gsoc.msusel.quamoco.model.qm.InfluenceEffect;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Measure;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Parent;
-import edu.montana.gsoc.msusel.quamoco.model.qm.QualityModel;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Ranking;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Refines;
-import edu.montana.gsoc.msusel.quamoco.model.qm.Target;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.montana.gsoc.msusel.quamoco.model.MeasureType;
+import edu.montana.gsoc.msusel.quamoco.model.QualityModel;
+import edu.montana.gsoc.msusel.quamoco.model.eval.Evaluation;
+import edu.montana.gsoc.msusel.quamoco.model.eval.factor.WeightedSumFactorAggregation;
+import edu.montana.gsoc.msusel.quamoco.model.eval.measure.SingleMeasureEvaluation;
+import edu.montana.gsoc.msusel.quamoco.model.factor.Factor;
+import edu.montana.gsoc.msusel.quamoco.model.factor.ProductFactor;
+import edu.montana.gsoc.msusel.quamoco.model.measure.Measure;
+import edu.montana.gsoc.msusel.quamoco.model.measurement.FactorRanking;
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>EdgePopulatorTest</code> contains tests for the class
  * <code>{@link EdgePopulator}</code>.
  *
- * @generatedBy CodePro at 5/30/15 3:42 PM
- * @author isaac
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class EdgePopulatorTest {
 
     /**
      * Run the EdgePopulator() constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:42 PM
      */
     @Test
-    public void testEdgePopulator_1() throws Exception {
+    public void testEdgePopulator_1() {
 
         final EdgePopulator result = new EdgePopulator();
 
         // TODO: add additional test code here
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     /**
      * Run the void modifyGraph(DistillerData,DirectedSparseGraph<Node,Edge>)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:42 PM
      */
     @Test
-    public void testModifyGraph_1() throws Exception {
-        final List<QualityModel> models = Lists.newArrayList();
-        final QualityModel model = new QualityModel("java", "", null, null, "java");
-        models.add(model);
-        final Factor f1 = new Factor("factor1", "", null, null, "factor1", new Refines("java.qm#factor2"),
-                "java.qm#factor1");
-        f1.addInfluence(new Influence(InfluenceEffect.POSITIVE, "", new Target("java.qm#factor2"), "java.qm#inf1"));
-        final Factor f2 = new Factor("factor2", "", null, null, "factor2", null, "java.qm#factor2");
-        final Measure m1 = new Measure("measure1", "", "measure1", null, "", "", null, null, "java.qm#measure1", false);
-        m1.addParent(new Parent("java.qm#factor1"));
-        final Evaluation eval = new Evaluation("eval1", "", "", BigDecimal.ZERO, "", new Evaluates("java.qm#factor2"), "",
-                "java.qm#eval1");
-        final Ranking rank = new Ranking("1", NormalizationRange.NA.toString(), "0.25", null,
-                new FactorLink("java.qm#factor1"), null, "java.qm#factor1", "java.qm#rank1");
-        eval.addRanking(rank);
-        model.addEvaluation(eval);
-        model.addFactor(f1);
-        model.addFactor(f2);
-        model.addMeasure(m1);
+    public void testModifyGraph_1() {
+        ModelManager manager = new ModelManager();
+        Factor f2 = null;
+        Measure m1 = null;
+        Factor f1 = null;
+        QualityModel model = QualityModel.builder().identifier("java").fileName("java.qm")
+                .description("")
+                .title("")
+                .factor("factor2", f2 = ProductFactor.builder().name("factor2").identifier("factor2").create())
+                .factor("factor1", f1 = (Factor) ProductFactor.builder().name("factor1").identifier("factor1")
+                        .description("")
+                        .refines(f2)
+                        .create())
+                .measure("measure1", m1 = Measure.builder()
+                        .name("measure1")
+                        .identifier("measure1")
+                        .description("")
+                        .title("")
+                        .type(MeasureType.FINDINGS)
+                        .create())
+                .evaluation("eval1", (Evaluation) SingleMeasureEvaluation.builder().identifier("eval1")
+                        .basedOn(m1)
+                        .evaluates(f1)
+                        .create())
+                .evaluation("eval2", (Evaluation) WeightedSumFactorAggregation.builder().identifier("eval2")
+                        .ranking(FactorRanking.builder()
+                                .identifier("rank1")
+                                .factor(f1)
+                                .rank(1)
+                                .weight(0.25)
+                                .create())
+                        .completeness(1.0)
+                        .description("")
+                        .maximumPoints(100d)
+                        .evaluates(f2)
+                        .title("")
+                        .create())
+                .create();
+        manager.addModel(model);
 
         final NodePopulator nodepop = new NodePopulator();
         final EdgePopulator fixture = new EdgePopulator();
-        final DistillerData data = new DistillerData(models);
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+        final DistillerData data = new DistillerData(manager);
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
 
         nodepop.modifyGraph(data, graph);
         fixture.modifyGraph(data, graph);
 
-        Assert.assertEquals(3, graph.getVertexCount());
-        Assert.assertEquals(2, graph.getEdgeCount());
-    }
+        Node fn1 = data.getFactor(f1);
+        assertNotNull(fn1);
+        Node fn2 = data.getFactor(f2);
+        assertNotNull(fn2);
+        assertFalse(graph.edgesConnecting(fn1, fn2).isEmpty());
 
-    /**
-     * Perform pre-test initialization.
-     *
-     * @throws Exception
-     *             if the initialization fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:42 PM
-     */
-    @Before
-    public void setUp() throws Exception {
-        // TODO: add additional set up code here
-    }
+        Node mn1 = data.getMeasure(m1);
+        assertNotNull(mn1);
+        assertFalse(graph.edgesConnecting(mn1, fn1).isEmpty());
 
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:42 PM
-     */
-    @After
-    public void tearDown() throws Exception {
-        // TODO: add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 5/30/15 3:42 PM
-     */
-    public static void main(final String[] args) {
-        new org.junit.runner.JUnitCore().run(EdgePopulatorTest.class);
+        Assert.assertEquals(3, graph.nodes().size());
+        Assert.assertEquals(2, graph.edges().size());
     }
 }

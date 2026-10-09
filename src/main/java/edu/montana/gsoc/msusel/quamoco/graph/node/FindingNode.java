@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,20 +26,22 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import com.google.common.graph.MutableNetwork;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * A node which collects findings into a Set. Findings are simply reports of
  * that a static analysis rule was activated in a tool.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class FindingNode extends Node {
 
@@ -46,102 +49,73 @@ public class FindingNode extends Node {
      * Associated static analysis rule name for which the collected findings are
      * reports of
      */
-    private String             ruleName;
+    @Getter
+    @Setter
+    private String ruleName;
     /**
      * The name of the tool providing the findings for this node
      */
-    private final String       toolName;
+    @Getter
+    private final String toolName;
     /**
      * The set of findings accumulated in this node.
      */
-    private final Set<Finding> findings;
+    @Getter
+    private List<Finding> findings;
 
     /**
      * Constructs a new FindingNode which is contained in the given graph,
      * identified by the given name, extracted from the quamoco model entity
      * with the given identifier.
-     * 
-     * @param graph
-     *            Graph to which this node belongs
-     * @param name
-     *            Identifier of this node
-     * @param owner
-     *            Identifier of the quamoco model entity this node came from
-     * @param ruleName
-     *            Name of the rule to which this finding indicates a violation
-     *            of
-     * @param toolName
-     *            Tool which provides the rules
+     *
+     * @param key      Identifier of this node
+     * @param owner    Identifier of the quamoco model entity this node came from
+     * @param ruleName Name of the rule to which this finding indicates a violation
+     *                 of
+     * @param toolName Tool which provides the rules
      */
-    public FindingNode(final DirectedSparseGraph<Node, Edge> graph, final String key, final String owner,
-            final String ruleName, final String toolName)
-    {
+    public FindingNode(final String key, final String owner,
+                       final String ruleName, final String toolName) {
+        this(null, key, owner, ruleName, toolName);
+    }
+
+    public FindingNode(MutableNetwork<Node, Edge> graph, final String key, final String owner,
+                       final String ruleName, final String toolName) {
         super(graph, key, owner);
         this.ruleName = ruleName;
         this.toolName = toolName;
-        findings = Sets.newHashSet();
-    }
-
-    /**
-     * @return Name of the rule this finding is a report of
-     */
-    public String getRuleName()
-    {
-        return ruleName;
-    }
-
-    /**
-     * @param ruleName
-     *            New name of the rule for this finding
-     */
-    public void setRuleName(final String ruleName)
-    {
-        this.ruleName = ruleName;
+        findings = Lists.newArrayList();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
-    {
-        calculated = true;
-        return BigDecimal.ZERO;
+    public double getValue() {
+//        calculated = true;
+        return 0.0;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getXMLTag()
-    {
+    public String getXMLTag() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Finding> getFindings()
-    {
-        return findings;
     }
 
     /**
      * Adds a new violation (finding) to this FindingNode. If the finding was
      * new (not a repeat or null) then this method returns true, otherwise it
      * returns false.
-     * 
-     * @param finding
-     *            An instance of a violation of the rule linked to this finding
-     *            node
+     *
+     * @param finding An instance of a violation of the rule linked to this finding
+     *                node
      * @return true if the finding was able to be added, false otherwise
      */
-    public boolean addFinding(final Finding finding)
-    {
-        if (finding == null)
-        {
+    public boolean addFinding(final Finding finding) {
+        if (finding == null) {
             return false;
         }
 
@@ -150,28 +124,18 @@ public class FindingNode extends Node {
     }
 
     /**
-     * @return The tool providing findings for this FindingNode
+     * {@inheritDoc}
      */
-    public String getToolName()
-    {
-        return toolName;
+    @Override
+    public double getLowerResult() {
+        return 0.0;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getLowerResult()
-    {
-        return BigDecimal.ZERO;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public BigDecimal getUpperResult()
-    {
-        return BigDecimal.ONE;
+    public double getUpperResult() {
+        return 1.0;
     }
 }

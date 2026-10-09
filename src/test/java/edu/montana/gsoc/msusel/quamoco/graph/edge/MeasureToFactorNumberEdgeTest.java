@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,41 +26,29 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.math.BigDecimal;
-
-import org.junit.After;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
+import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
+import edu.montana.gsoc.msusel.quamoco.graph.node.ValueNode;
+import edu.montana.gsoc.msusel.quamoco.model.InfluenceEffect;
+import edu.montana.gsoc.msusel.quamoco.model.MeasureType;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
+import edu.montana.gsoc.msusel.quamoco.processor.evaluators.WeightedSumEvaluator;
+import edu.montana.gsoc.msusel.quamoco.processor.lineardist.PositiveLinearDistribution;
+import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.InfluenceType;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.MeasureToFactorNumberEdge;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.ValueToMeasureEdge;
-import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureType;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.graph.node.ValueNode;
-import edu.montana.gsoc.msusel.quamoco.model.qm.InfluenceEffect;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.montana.gsoc.msusel.quamoco.processor.aggregators.FindingsUnionAggregator;
-import edu.montana.gsoc.msusel.quamoco.processor.lineardist.PositiveLinearDistribution;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import static org.junit.Assert.*;
 
 /**
  * The class <code>MeasureToFactorNumberEdgeTest</code> contains tests for the
  * class <code>{@link MeasureToFactorNumberEdge}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:38 PM
- * @author fate
- * @version $Revision: BigDecimal.ONE $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class MeasureToFactorNumberEdgeTest {
 
@@ -68,13 +57,9 @@ public class MeasureToFactorNumberEdgeTest {
     /**
      * Run the MeasureToFactorNumberEdge(String,InfluenceEffect) constructor
      * test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testMeasureToFactorNumberEdge_1() throws Exception
-    {
+    public void testMeasureToFactorNumberEdge_1() {
         final String name = "";
         final InfluenceEffect effect = InfluenceEffect.NEGATIVE;
 
@@ -83,26 +68,22 @@ public class MeasureToFactorNumberEdgeTest {
         // add additional test code here
         assertNotNull(result);
         assertEquals("NEGATIVE", result.getInf());
-        assertEquals(null, result.getDist());
-        assertEquals(new BigDecimal(100), result.getMaxPoints());
-        assertEquals(false, result.isUsesLinearDist());
-        assertEquals(null, result.getNormalizer());
-        assertEquals(BigDecimal.ONE, result.getWeight());
-        assertEquals(BigDecimal.ONE, result.getUpperBound());
-        assertEquals(BigDecimal.ZERO, result.getLowerBound());
+        assertNull(result.getDist());
+        assertEquals(100.0, result.getMaxPoints(), 0.001);
+        assertFalse(result.isUsesLinearDist());
+        assertNull(result.getNormalizer());
+        assertEquals(1.0, result.getWeight(), 0.001);
+        assertEquals(1.0, result.getUpperBound(), 0.001);
+        assertEquals(0.0, result.getLowerBound(), 0.001);
         assertEquals("", result.getName());
     }
 
     /**
      * Run the MeasureToFactorNumberEdge(String,InfluenceEffect) constructor
      * test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testMeasureToFactorNumberEdge_2() throws Exception
-    {
+    public void testMeasureToFactorNumberEdge_2() {
         final String name = "";
         final InfluenceEffect effect = null;
 
@@ -111,25 +92,21 @@ public class MeasureToFactorNumberEdgeTest {
         // add additional test code here
         assertNotNull(result);
         assertEquals("POSITIVE", result.getInf());
-        assertEquals(null, result.getDist());
-        assertEquals(new BigDecimal(100), result.getMaxPoints());
-        assertEquals(false, result.isUsesLinearDist());
-        assertEquals(null, result.getNormalizer());
-        assertEquals(BigDecimal.ONE, result.getWeight());
-        assertEquals(BigDecimal.ONE, result.getUpperBound());
-        assertEquals(BigDecimal.ZERO, result.getLowerBound());
+        assertNull(result.getDist());
+        assertEquals(100.0, result.getMaxPoints(), 0.001);
+        assertFalse(result.isUsesLinearDist());
+        assertNull(result.getNormalizer());
+        assertEquals(1.0, result.getWeight(), 0.001);
+        assertEquals(1.0, result.getUpperBound(), 0.001);
+        assertEquals(0.0, result.getLowerBound(), 0.001);
         assertEquals("", result.getName());
     }
 
     /**
      * Run the String getInf() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetInf_1() throws Exception
-    {
+    public void testGetInf_1() {
         final String result = fixture.getInf();
 
         // add additional test code here
@@ -138,179 +115,147 @@ public class MeasureToFactorNumberEdgeTest {
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_1() throws Exception
-    {
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+    public void testGetValue_1() {
+        fixture.setRank(1);
+        fixture.weight = 1.0;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = true;
-        fixture.maxPoints = BigDecimal.ONE;
         fixture.dist = new PositiveLinearDistribution();
-        fixture.norm = new NullNormalizer(fixture, "", NormalizationRange.CLASS);
+        fixture.norm = new NullNormalizer(fixture, "norm", NormalizationRange.CLASS);
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(BigDecimal.ONE, result);
+        assertEquals(0.0, result, 0.001);
     }
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_2() throws Exception
-    {
-        fixture.weight = new BigDecimal(0.5);
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+    public void testGetValue_2() {
+        fixture.weight = 0.5;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = false;
-        fixture.maxPoints = BigDecimal.ONE;
+        fixture.maxPoints = 100.0;
         fixture.setInf(InfluenceType.POS);
+        fixture.setRank(1);
         fixture.dist = new PositiveLinearDistribution();
-        fixture.norm = new NullNormalizer(fixture, "", NormalizationRange.CLASS);
+        fixture.norm = new NullNormalizer(fixture, "norm", NormalizationRange.CLASS);
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(new BigDecimal(0.5), result);
+        assertEquals(0.55, result, 0.001);
     }
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_3() throws Exception
-    {
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+    public void testGetValue_3() {
+        fixture.weight = 1.0;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = false;
-        fixture.maxPoints = BigDecimal.ONE;
-        fixture.setInf(InfluenceType.NEG);
+        fixture.maxPoints = 100.0;
+        fixture.setInf(InfluenceType.POS);
         fixture.dist = null;
-        fixture.norm = new NullNormalizer(fixture, "", NormalizationRange.CLASS);
+        fixture.norm = new NullNormalizer(fixture, "norm", NormalizationRange.CLASS);
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(BigDecimal.ZERO, result);
+        assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_4() throws Exception
-    {
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = new BigDecimal(2.0);
+    public void testGetValue_4() {
+        fixture.weight = 0.5;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = true;
-        fixture.maxPoints = new BigDecimal(0.5);
+        fixture.setRank(1);
+        fixture.maxPoints = 100.0;
+        fixture.setInf(InfluenceType.POS);
         fixture.dist = new PositiveLinearDistribution();
         fixture.norm = null;
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(new BigDecimal(0.5), result);
+        assertEquals(0.55, result, 0.001);
     }
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_5() throws Exception
-    {
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+    public void testGetValue_5() {
+        fixture.weight = 1.0;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = false;
-        fixture.maxPoints = BigDecimal.ONE;
         fixture.setInf(InfluenceType.NEG);
         fixture.dist = null;
         fixture.norm = null;
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(BigDecimal.ZERO, result);
+        assertEquals(0.0, result, 0.001);
     }
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_6() throws Exception
-    {
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+    public void testGetValue_6() {
+        fixture.weight = 1.0;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = false;
-        fixture.maxPoints = BigDecimal.ONE;
         fixture.setInf(InfluenceType.POS);
         fixture.dist = null;
         fixture.norm = null;
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(BigDecimal.ONE, result);
+        assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the double getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_7() throws Exception
-    {
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+    public void testGetValue_7() {
+        fixture.weight = 1.0;
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = false;
-        fixture.maxPoints = new BigDecimal(0.5);
         fixture.setInf(null);
         fixture.dist = null;
         fixture.norm = null;
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // add additional test code here
-        assertEquals(BigDecimal.ONE, result);
+        assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the void setInf(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetInf_1() throws Exception
-    {
+    public void testSetInf_1() {
         final String inf = "";
 
         try
@@ -326,13 +271,9 @@ public class MeasureToFactorNumberEdgeTest {
 
     /**
      * Run the void setInf(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetInf_2() throws Exception
-    {
+    public void testSetInf_2() {
         final String inf = null;
 
         fixture.setInf(inf);
@@ -341,13 +282,9 @@ public class MeasureToFactorNumberEdgeTest {
 
     /**
      * Run the void setInf(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetInf_3() throws Exception
-    {
+    public void testSetInf_3() {
         final String inf = "Test";
 
         try
@@ -363,13 +300,9 @@ public class MeasureToFactorNumberEdgeTest {
 
     /**
      * Run the void setInf(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetInf_4() throws Exception
-    {
+    public void testSetInf_4() {
         final String inf = InfluenceType.POS;
 
         try
@@ -385,13 +318,9 @@ public class MeasureToFactorNumberEdgeTest {
 
     /**
      * Run the void setInf(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetInf_5() throws Exception
-    {
+    public void testSetInf_5() {
         final String inf = InfluenceType.NEG;
 
         try
@@ -410,55 +339,35 @@ public class MeasureToFactorNumberEdgeTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Before
     public void setUp() throws Exception
     {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final MeasureNode src = new MeasureNode(graph, "measure", "owner");
         src.setType(MeasureType.NUMBER);
-        src.setProcessor(new FindingsUnionAggregator(src));
+        src.setProcessor(new WeightedSumEvaluator(src));
         final FactorNode dest = new FactorNode(graph, "factor", "owner");
         final ValueNode srcsrc = new ValueNode(graph, "key", "owner", "tool");
-        srcsrc.addValue(BigDecimal.TEN);
-        srcsrc.addValue(new BigDecimal(100));
+        srcsrc.addValue(10.0);
+        srcsrc.addValue(100.0);
 
         fixture = new MeasureToFactorNumberEdge("", src, dest, InfluenceEffect.NEGATIVE);
-        graph.addEdge(new ValueToMeasureEdge("v2m", srcsrc, src), srcsrc, src, EdgeType.DIRECTED);
-        graph.addEdge(fixture, src, dest, EdgeType.DIRECTED);
+        graph.addEdge(srcsrc, src, new ValueToMeasureEdge("v2m", srcsrc, src));
+        graph.addEdge(src, dest, fixture);
 
-        fixture.weight = BigDecimal.ONE;
-        fixture.lowerBound = BigDecimal.ZERO;
-        fixture.upperBound = BigDecimal.ONE;
+        fixture.weight = 1.0;
+        fixture.setRank(1);
+        fixture.lowerBound = 0.0;
+        fixture.upperBound = 1.0;
         fixture.usesLinearDist = true;
-        fixture.maxPoints = BigDecimal.ONE;
+        fixture.maxPoints = 100.0;
         fixture.dist = new PositiveLinearDistribution();
-        fixture.norm = new NullNormalizer(fixture, "", NormalizationRange.CLASS);
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(MeasureToFactorNumberEdgeTest.class);
+        fixture.norm = new NullNormalizer(fixture, "norm", NormalizationRange.CLASS);
     }
 }

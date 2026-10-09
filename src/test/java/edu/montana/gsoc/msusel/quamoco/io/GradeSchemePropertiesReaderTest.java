@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,35 +26,24 @@
  */
 package edu.montana.gsoc.msusel.quamoco.io;
 
-import java.math.BigDecimal;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import edu.montana.gsoc.msusel.quamoco.distiller.Grade;
-import edu.montana.gsoc.msusel.quamoco.io.GradeSchemePropertiesReader;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * The class <code>GradeSchemePropertiesReaderTest</code> contains tests for the
  * class <code>{@link GradeSchemePropertiesReader}</code>.
  *
- * @generatedBy CodePro at 5/30/15 3:42 PM
- * @author isaac
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class GradeSchemePropertiesReaderTest {
 
     /**
      * Run the GradeSchemePropertiesReader() constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:42 PM
      */
     @Test
-    public void testGradeSchemePropertiesReader_1() throws Exception
-    {
+    public void testGradeSchemePropertiesReader_1() {
         final GradeSchemePropertiesReader fixture = new GradeSchemePropertiesReader();
 
         Assert.assertNotNull(fixture);
@@ -61,73 +51,31 @@ public class GradeSchemePropertiesReaderTest {
 
     /**
      * Run the void read() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:42 PM
      */
     @Test
-    public void testRead_1() throws Exception
-    {
+    public void testRead_1() {
         final GradeSchemePropertiesReader fixture = new GradeSchemePropertiesReader();
         fixture.read();
 
-        Assert.assertEquals(new BigDecimal(1.5), Grade.A.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(0.98), Grade.A.getLowerThreshold());
+        Assert.assertEquals(1.5, Grade.A.getUpperThreshold(), 0.001);
+        Assert.assertEquals(0.98, Grade.A.getLowerThreshold(), 0.001);
 
-        Assert.assertEquals(new BigDecimal(0.98), Grade.B.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(0.96), Grade.B.getLowerThreshold());
+        Assert.assertEquals(0.98, Grade.B.getUpperThreshold(), 0.001);
+        Assert.assertEquals(0.96, Grade.B.getLowerThreshold(), 0.001);
 
-        Assert.assertEquals(new BigDecimal(0.96), Grade.C.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(0.94), Grade.C.getLowerThreshold());
+        Assert.assertEquals(0.96, Grade.C.getUpperThreshold(), 0.001);
+        Assert.assertEquals(0.94, Grade.C.getLowerThreshold(), 0.001);
 
-        Assert.assertEquals(new BigDecimal(0.94), Grade.D.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(0.92), Grade.D.getLowerThreshold());
+        Assert.assertEquals(0.94, Grade.D.getUpperThreshold(), 0.001);
+        Assert.assertEquals(0.92, Grade.D.getLowerThreshold(), 0.001);
 
-        Assert.assertEquals(new BigDecimal(0.92), Grade.E.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(0.90), Grade.E.getLowerThreshold());
+        Assert.assertEquals(0.92, Grade.E.getUpperThreshold(), 0.001);
+        Assert.assertEquals(0.90, Grade.E.getLowerThreshold(), 0.001);
 
-        Assert.assertEquals(new BigDecimal(0.90), Grade.F.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(0.0), Grade.F.getLowerThreshold());
+        Assert.assertEquals(0.90, Grade.F.getUpperThreshold(), 0.001);
+        Assert.assertEquals(0.0, Grade.F.getLowerThreshold(), 0.001);
 
-        Assert.assertEquals(new BigDecimal(0.0), Grade.U.getUpperThreshold());
-        Assert.assertEquals(new BigDecimal(-1.0), Grade.U.getLowerThreshold());
-    }
-
-    /**
-     * Perform pre-test initialization.
-     *
-     * @throws Exception
-     *             if the initialization fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:42 PM
-     */
-    @Before
-    public void setUp() throws Exception
-    {
-        // TODO: add additional set up code here
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:42 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // TODO: add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 5/30/15 3:42 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(GradeSchemePropertiesReaderTest.class);
+        Assert.assertEquals(0.0, Grade.U.getUpperThreshold(), 0.001);
+        Assert.assertEquals(-1.0, Grade.U.getLowerThreshold(), 0.001);
     }
 }

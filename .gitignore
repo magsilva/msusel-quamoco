@@ -1,7 +1,6 @@
 /target
 *.class
 *.jar
-/target/**
 /.sonar
 /.sonar/**
 *.udb
@@ -23,13 +22,3 @@ buildNumber.properties
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
-
-/tree-java.json
-/tree-m-cs.json
-/tree-m-java.json
-/tree-s-cs.json
-/tree-s-java.json
-/tree.json
-/testdata/
-/.Rhistory
-/csharp.qm.bak

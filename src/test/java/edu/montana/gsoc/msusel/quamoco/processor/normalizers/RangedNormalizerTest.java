@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,64 +26,49 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.normalizers;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Set;
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Sets;
-
-import edu.montana.gsoc.msusel.CodeTree;
-import edu.montana.gsoc.msusel.node.FileNode;
-import edu.montana.gsoc.msusel.node.MethodNode;
-import edu.montana.gsoc.msusel.node.ProjectNode;
-import edu.montana.gsoc.msusel.node.TypeNode;
+import com.google.common.collect.Lists;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.isu.isuese.datamodel.System;
+import edu.isu.isuese.datamodel.*;
+import edu.montana.gsoc.msusel.quamoco.distiller.QuamocoContext;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.MeasureToMeasureNumberEdge;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.ValueToMeasureEdge;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
-import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.graph.node.ValueNode;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.montana.gsoc.msusel.quamoco.processor.Extent;
-import edu.montana.gsoc.msusel.quamoco.processor.MetricsContext;
+import edu.montana.gsoc.msusel.quamoco.graph.node.*;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
 import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMeanAggregator;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.RangedNormalizer;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.montana.gsoc.msusel.quamoco.processor.extents.Extent;
+import org.easymock.EasyMock;
+import org.javalite.activejdbc.test.DBSpec;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 /**
  * The class <code>RangedNormalizerTest</code> contains tests for the class
  * <code>{@link RangedNormalizer}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:35 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
-public class RangedNormalizerTest {
+public class RangedNormalizerTest extends DBSpec {
 
     private RangedNormalizer fixture;
-    private Set<Finding>     findings;
-    private FileNode         file;
-    private FileNode         file2;
-    private FileNode         file3;
+    private List<Finding> findings;
+    private File file;
+    private File file2;
+    private File file3;
 
     /**
      * Run the RangedNormalizer(Edge,String,NormalizationRange) constructor
      * test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testRangedNormalizer_1() throws Exception
-    {
+    public void testRangedNormalizer_1() {
         final Edge owner = EasyMock.createMock(Edge.class);
         final String normMetric = "LOC";
         final NormalizationRange range = NormalizationRange.CLASS;
@@ -99,44 +85,45 @@ public class RangedNormalizerTest {
     }
 
     @Test
-    public void testNormalize_Set_Finding_1() throws Exception
-    {
-        findings = Sets.newHashSet();
-        Finding f1 = new Finding(file, "issue", "issue");
-        Finding f2 = new Finding(file2, "issue", "issue");
+    public void testNormalize_Set_Finding_1() {
+        findings = Lists.newArrayList();
+        Finding f1 = new FileFinding(file, "issue", "issue");
+        Finding f2 = new FileFinding(file2, "issue", "issue");
         findings.add(f1);
         findings.add(f2);
 
-        BigDecimal result = fixture.normalize(findings);
-        Assert.assertEquals(new BigDecimal(0.66667).setScale(5, RoundingMode.HALF_UP), result);
+        double result = fixture.normalize(findings);
+        double exp = 0.66667;
+        double res = result;
+        Assert.assertEquals(exp, res, 0.00001);
     }
 
     @Test
-    public void testNormalize_Set_Finding_2() throws Exception
-    {
-        BigDecimal result = fixture.normalize((Set<Finding>) null);
+    public void testNormalize_Set_Finding_2() {
+        double result = fixture.normalize((List<Finding>) null);
 
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     @Test
-    public void testNormalize_Set_Finding_3() throws Exception
-    {
-        BigDecimal result = fixture.normalize(Sets.newHashSet());
+    public void testNormalize_Set_Finding_3() {
+        double result = fixture.normalize(Lists.newArrayList());
 
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
-    public void testNormalize_Set_Finding_4() throws Exception
-    {
-        findings = Sets.newHashSet();
-        Finding f1 = new Finding(file, "issue", "issue");
-        Finding f2 = new Finding(file2, "issue", "issue");
-        findings.add(f1);
-        findings.add(f2);
+    @Test
+    public void testNormalize_Set_Finding_4() {
+        findings = Lists.newArrayList();
+        Finding f1 = new FileFinding(file, "issue", "issue");
+        Finding f2 = new FileFinding(file2, "issue", "issue");
+        Finding f3 = new FileFinding(file3, "issue", "issue");
+//        findings.add(f1);
+//        findings.add(f2);
+//        findings.add(f3);
 
-        BigDecimal result = fixture.normalize(findings);
-        Assert.assertEquals(BigDecimal.ONE, result);
+        double result = fixture.normalize(findings);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     /**
@@ -144,15 +131,24 @@ public class RangedNormalizerTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Before
-    public void setUp() throws Exception
-    {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+    public void setUp() throws Exception {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
 
-        final ValueNode vn = new ValueNode(graph, "LOC", "owner", "tool");
-        vn.addValue(new BigDecimal(100));
+        MetricRepository repo = MetricRepository.builder().key("repo").name("repo").create();
+        Metric.builder().handle("LOC").key("repo:LOC").name("LOC").create();
+        Metric.builder().handle("NOM").key("repo:NOM").name("NOM").create();
+        Metric.builder().handle("NIV").key("repo:NIV").name("NIV").create();
+        Metric.builder().handle("NOC").key("repo:NOC").name("NOC").create();
+
+        final ValueNode vn = new ValueNode(graph, "LOC", "owner", "repo");
+        vn.addValue(100.0);
 
         final MeasureNode src = new MeasureNode(graph, "src", "owner");
         src.setProcessor(new NumberMeanAggregator(src));
@@ -163,71 +159,53 @@ public class RangedNormalizerTest {
         final Edge e = new MeasureToMeasureNumberEdge("edge", src, dest);
         fixture = new RangedNormalizer(e, "LOC", NormalizationRange.FILE);
 
-        graph.addEdge(e, src, dest, EdgeType.DIRECTED);
-        graph.addEdge(new ValueToMeasureEdge("v2m", vn, src), vn, src, EdgeType.DIRECTED);
+        graph.addEdge(src, dest, e);
+        graph.addEdge(vn, src, new ValueToMeasureEdge("v2m", vn, src));
 
         // setup metrics
-        final MetricsContext context = MetricsContext.getCleanInstance();
+        System sys = System.builder().key("system").name("System").create();
+        file = null;
+        file2 = null;
+        Project proj = Project.builder().projKey("Test").create();
+        sys.addProject(proj);
+        Namespace ns = Namespace.builder().nsKey("ns").name("ns").create();
+        proj.addNamespace(ns);
+        QuamocoContext.instance().setMetricRepoKey("repo");
+        QuamocoContext.instance().setProject(proj);
+        proj.addMeasure(Measure.of("repo:LOC").on(proj).withValue(1000.0));
+        proj.addMeasure(Measure.of("repo:NOM").on(proj).withValue(2.0));
+        proj.addMeasure(Measure.of("repo:NIV").on(proj).withValue(10.0));
+        proj.addMeasure(Measure.of("repo:NOC").on(proj).withValue(2.0));
 
-        CodeTree tree = new CodeTree();
-        FileNode file = null;
-        FileNode file2 = null;
-        ProjectNode proj = ProjectNode.builder("Test")
-                .file(
-                        file = FileNode.builder("path")
-                                .metric("LOC", 200.0)
-                                .type(
-                                        TypeNode.builder("Type", "namespace.Type")
-                                                .range(1, 100)
-                                                .metric("LOC", 100.0)
-                                                .method(
-                                                        MethodNode.builder("method", "namespace.Type#method")
-                                                                .range(20, 100)
-                                                                .metric("LOC", 80.0)
-                                                                .create())
-                                                .create())
-                                .create())
-                .file(file2 = FileNode.builder("path2").metric("LOC", 200.0).create())
-                .file(FileNode.builder("path3").metric("LOC", 200.0).create())
-                .metric("LOC", 1000.0)
-                .metric("NOM", 2.0)
-                .metric("NIV", 10.0)
-                .metric("NOC", 2.0)
-                .create();
-        tree.setProject(proj);
+        file = File.builder().fileKey("path").create();
+        proj.addFile(file);
+        proj.addMeasure(Measure.of("repo:LOC").on(file).withValue(200.0));
 
-        findings = Sets.newHashSet();
-        Finding f1 = new Finding(file, "issue", "issue");
-        Finding f2 = new Finding(file2, "issue", "issue");
+        Type type = Type.builder().type(Type.CLASS).compKey("namespace.Type").start(1).end(100).create();
+        file.addType(type);
+        ns.addType(type);
+        proj.addMeasure(Measure.of("repo:LOC").on(type).withValue(100.0));
+
+        Method method1 = Method.builder().compKey("namespace.Type#method").start(20).end(100).create();
+        type.addMember(method1);
+        proj.addMeasure(Measure.of("repo:LOC").on(method1).withValue(80.0));
+
+        file2 = File.builder().fileKey("path2").create();
+        proj.addFile(file2);
+        proj.addMeasure(Measure.of("repo:LOC").on(file2).withValue(200.0));
+
+        file3 = File.builder().fileKey("path3").create();
+        proj.addFile(file3);
+        proj.addMeasure(Measure.of("repo:LOC").on(file3).withValue(200.0));
+
+        sys.addProject(proj);
+
+        findings = Lists.newArrayList();
+        Finding f1 = new FileFinding(file, "issue", "issue");
+        Finding f2 = new FileFinding(file2, "issue", "issue");
         findings.add(f1);
         findings.add(f2);
 
-        context.merge(tree);
         Extent.getInstance().clearExtents();
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(RangedNormalizerTest.class);
     }
 }

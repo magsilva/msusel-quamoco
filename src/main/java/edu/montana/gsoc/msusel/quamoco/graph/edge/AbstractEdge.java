@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +26,15 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
 
 /**
  * An abstract representation of an Edge for the Quamoco
@@ -39,52 +42,62 @@ import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
  * source and provide this normalized value to the dest.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
+@EqualsAndHashCode(of = {"name"})
+@ToString(of = {"name"})
 public abstract class AbstractEdge implements Edge {
 
     /**
      * Incoming side of the edge
      */
-    protected Node       src;
+    @Getter
+    @Setter
+    protected Node source;
     /**
      * Outgoing side of the edge
      */
-    protected Node       dest;
+    @Getter
+    @Setter
+    protected Node dest;
     /**
      * Normalizer attached to this edge
      * FIXME: should only be available on Normalizable Edges
      */
+    @Getter
+    @Setter
     protected Normalizer norm;
     /**
      * The next unique identification number for an edge
      */
-    private static long  NEXT_ID = 0;
+    private static long NEXT_ID = 0;
     /**
      * Name of this edge
      */
+    @Getter
     private final String name;
     /**
      * The unique identifying number for this edge
      */
-    private long         id;
+    @Getter
+    @Setter
+    private long id;
 
     /**
      * Constructs a new MeasureToMeasureNumberEdge with the given name
      * connecting the source and dest nodes.
-     * 
+     *
      * @param name
      *            Name of this edge
-     * @param src
+     * @param source
      *            Source node
      * @param dest
      *            Dest node
      */
-    public AbstractEdge(final String name, final Node src, final Node dest)
-    {
+    AbstractEdge(final String name, final Node source, final Node dest) {
         this.name = name;
         id = AbstractEdge.NEXT_ID++;
-        this.src = src;
+        this.source = source;
         this.dest = dest;
     }
 
@@ -92,95 +105,8 @@ public abstract class AbstractEdge implements Edge {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        final AbstractEdge other = (AbstractEdge) obj;
-        if (id != other.id)
-        {
-            return false;
-        }
-        if (name == null)
-        {
-            if (other.name != null)
-            {
-                return false;
-            }
-        }
-        else if (!name.equals(other.name))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getId()
-    {
-        return id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (id ^ id >>> 32);
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString()
-    {
-        return "Edge: " + id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setId(final long id)
-    {
-        this.id = id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<BigDecimal> getValues()
-    {
-        final List<BigDecimal> list = Lists.newArrayList();
+    public List<Double> getValues() {
+        final List<Double> list = Lists.newArrayList();
         list.add(getValue());
 
         return list;
@@ -192,19 +118,18 @@ public abstract class AbstractEdge implements Edge {
      * range. Thus this method takes a value and if this value is less than 0.0,
      * returns 0.0, or if the value is greater than 1.0, returns 1.0. Otherwise
      * it returns the original value.
-     * 
+     *
      * @param value
      *            Input value
      * @return 0.0 if the input value is less than 0.0, 1.0 if the input value
      *         is greater than 1.0, and the original value otherwise.
      */
-    protected BigDecimal thresholdValue(BigDecimal value)
-    {
-        if (value.compareTo(BigDecimal.ZERO) < 0)
-            return BigDecimal.ZERO;
+    double thresholdValue(double value, double lower, double upper) {
+        if (Double.compare(value, lower) < 0)
+            return lower;
 
-        if (value.compareTo(BigDecimal.ONE) > 0)
-            return BigDecimal.ONE;
+        if (Double.compare(value, upper) > 0)
+            return upper;
 
         return value;
     }

@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,145 +26,108 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
+import com.google.common.collect.Lists;
+import com.google.common.graph.MutableNetwork;
+import edu.montana.gsoc.msusel.quamoco.distiller.QuamocoContext;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.RankedEdge;
+import edu.montana.gsoc.msusel.quamoco.model.MeasureType;
+import edu.montana.gsoc.msusel.quamoco.processor.FindingsAggregator;
+import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
+import edu.montana.gsoc.msusel.quamoco.processor.extents.Extent;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.RankedEdge;
-import edu.montana.gsoc.msusel.quamoco.processor.Extent;
-import edu.montana.gsoc.msusel.quamoco.processor.FindingsAggregator;
-import edu.montana.gsoc.msusel.quamoco.processor.MetricsContext;
-import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 
 /**
  * MeasureNode -
  *
  * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class MeasureNode extends Node {
 
     /**
      * The type associated with this measure
      */
-    private String       type;
+    @Getter
+    @Setter
+    private MeasureType type;
     /**
      * The method associated with this measure
      */
-    private String       method;
+    @Getter
+    @Setter
+    private String method;
     /**
      * The set of findings collected in this node
      */
-    private Set<Finding> findings;
+    private List<Finding> findings;
 
     /**
      * Constructs a new MeasureNode which is contained in the given graph,
      * identified by the given name, extracted from the quamoco model entity
      * with
      * the given identifier.
-     * 
-     * @param graph
-     *            Graph to which this node belongs
-     * @param name
-     *            Identifier of this node
-     * @param owner
-     *            Identifier of the quamoco model entity this node came from
+     *
+     * @param name  Identifier of this node
+     * @param owner Identifier of the quamoco model entity this node came from
      */
-    public MeasureNode(final DirectedSparseGraph<Node, Edge> graph, final String name, final String owner)
-    {
+    public MeasureNode(final String name, final String owner) {
+        this(null, name, owner);
+    }
+
+    public MeasureNode(MutableNetwork<Node, Edge> graph, final String name, final String owner) {
         super(graph, name, owner);
         type = MeasureType.FINDINGS;
-        findings = Sets.newHashSet();
-    }
-
-    /**
-     * @return Method of this measure
-     */
-    public String getMethod()
-    {
-        return method;
-    }
-
-    /**
-     * @return the type of this measure
-     */
-    public String getType()
-    {
-        return type;
+        findings = Lists.newArrayList();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
-    {
-        if (type.equals(MeasureType.NUMBER))
-        {
-            if (!calculated)
-            {
-                value = processor.process();
+    public double getValue() {
+        if (!calculated) {
+            if (type == MeasureType.NUMBER) {
+                return processor.process();
+            } else if (type == MeasureType.FINDINGS) {
+                return 0.0;
             }
 
-            calculated = true;
+            return 1.0;
+        } else {
             return value;
         }
+    }
 
-        return BigDecimal.ZERO;
+    public double normalize(double value) {
+        double norm = (value - getLowerResult()) / (getUpperResult() - getLowerResult());
+        return Double.isNaN(norm) ? 0.0 : norm;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getXMLTag()
-    {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(
-                String.format(
-                        "<nodes name=\"%s\" description=\"%s\" owner=\"%s\" type=\"MEASURE\">\n",
-                        StringEscapeUtils.escapeXml10(name), StringEscapeUtils.escapeXml10(description), ownedBy));
-        builder.append("\t</nodes>");
-        return builder.toString();
-    }
-
-    /**
-     * @param method
-     *            the new method of this measure
-     */
-    public void setMethod(final String method)
-    {
-        this.method = method;
-    }
-
-    /**
-     * @param type
-     *            the new type of this measure
-     */
-    public void setType(final String type)
-    {
-        this.type = type;
+    public String getXMLTag() {
+        return String.format(
+                "<nodes name=\"%s\" description=\"%s\" owner=\"%s\" type=\"MEASURE\">\n",
+                StringEscapeUtils.escapeXml10(name), StringEscapeUtils.escapeXml10(description), ownedBy) +
+                "\t</nodes>";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Finding> getFindings()
-    {
-        if (findings == null || findings.isEmpty())
-        {
-            if (type.equals(MeasureType.FINDINGS))
-            {
-                findings = ((FindingsAggregator) processor).processFindings();
-            }
+    public List<Finding> getFindings() {
+        if (type.equals(MeasureType.FINDINGS)) {
+            findings = ((FindingsAggregator) processor).processFindings();
         }
 
         return findings;
@@ -173,63 +137,51 @@ public class MeasureNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getLowerResult()
-    {
-        final List<BigDecimal> values = collectFindingExtents();
+    public double getLowerResult() {
+        final List<Double> values = collectFindingExtents();
 
-        return values.isEmpty() ? BigDecimal.ZERO : Collections.min(values);
+        return values.isEmpty() ? 0.0 : Collections.min(values);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getUpperResult()
-    {
-        final List<BigDecimal> values = collectFindingExtents();
+    public double getUpperResult() {
+        final List<Double> values = collectFindingExtents();
 
-        return values.isEmpty() ? BigDecimal.ONE : Collections.max(values);
+        return values.isEmpty() ? 1.0 : Collections.max(values);
     }
 
     /**
      * @return the list of extents of the findings attached to this
-     *         measure
+     * measure
      */
-    private List<BigDecimal> collectFindingExtents()
-    {
-        final List<BigDecimal> values = Lists.newArrayList();
+    private List<Double> collectFindingExtents() {
+        final List<Double> values = Lists.newArrayList();
 
-        if (type.equals(MeasureType.FINDINGS))
-        {
-            for (final Edge e : graph.getInEdges(this))
-            {
-                final Node n = graph.getOpposite(this, e);
-                if (e instanceof RankedEdge)
-                {
+        if (type.equals(MeasureType.FINDINGS)) {
+            for (final Edge e : graph.inEdges(this)) {
+                final Node n = getOpposite(e);
+                if (e instanceof RankedEdge) {
                     final RankedEdge we = (RankedEdge) e;
                     final Normalizer norm = we.getNormalizer();
 
-                    if (n instanceof MeasureNode)
-                    {
+                    if (n instanceof MeasureNode) {
                         values.add(
                                 Extent.getInstance().findMeasureExtent(
-                                        norm.getMetric(), norm.getNormalizationRange(), (MeasureNode) n));
-                    }
-                    else if (n instanceof FindingNode)
-                    {
+                                        norm.getMetric(), norm.getRange(), (MeasureNode) n));
+                    } else if (n instanceof FindingNode) {
                         values.add(
                                 Extent.getInstance().findFindingExtent(
-                                        MetricsContext.getInstance().getTree(), norm.getMetric(),
-                                        norm.getNormalizationRange(), (FindingNode) n));
+                                        QuamocoContext.instance().getProject(), norm.getMetric(),
+                                        norm.getRange(), (FindingNode) n));
                     }
                 }
             }
-        }
-        else
-        {
-            for (final Edge e : graph.getInEdges(this))
-            {
-                final Node n = graph.getOpposite(this, e);
+        } else {
+            for (final Edge e : graph.inEdges(this)) {
+                final Node n = getOpposite(e);
                 values.add(n.getValue());
             }
         }

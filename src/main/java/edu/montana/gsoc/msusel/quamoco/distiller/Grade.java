@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +26,6 @@
  */
 package edu.montana.gsoc.msusel.quamoco.distiller;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +33,7 @@ import java.util.List;
  * An enumeration representing a grade.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public enum Grade {
 
@@ -54,12 +54,12 @@ public enum Grade {
     /**
      * The lower threshold value for this grade.
      */
-    private BigDecimal lower;
+    private double lower;
 
     /**
      * The upper threshold value for this grade.
      */
-    private BigDecimal upper;
+    private double upper;
 
     /**
      * Constructor
@@ -67,11 +67,11 @@ public enum Grade {
      * @param name
      *            Name of this grade.
      */
-    private Grade(final String name)
+    Grade(final String name)
     {
         this.name = name;
-        lower = BigDecimal.ZERO;
-        upper = BigDecimal.ONE;
+        lower = 0.0;
+        upper = 1.0;
     }
 
     /**
@@ -83,13 +83,13 @@ public enum Grade {
      *         should be assigned a grader higher than this one, or <= -1 if the
      *         value should be assigned a lower grade than this one.
      */
-    public int evaluate(final BigDecimal val)
+    public int evaluate(final double val)
     {
-        if (val.compareTo(lower) > 0 && val.compareTo(upper) <= 0)
+        if (Double.compare(val, lower) > 0 && Double.compare(val, upper) <= 0)
         {
             return 0;
         }
-        else if (val.compareTo(lower) <= 0)
+        else if (Double.compare(val, lower) <= 0)
         {
             return -1;
         }
@@ -117,9 +117,9 @@ public enum Grade {
      * @throws GradeThresholdException
      *             if the lower threshold is greater than the upper threshold.
      */
-    public void setThresholds(final BigDecimal lower, final BigDecimal upper) throws GradeThresholdException
+    public void setThresholds(final double lower, final double upper) throws GradeThresholdException
     {
-        if (lower.compareTo(upper) > 0)
+        if (Double.compare(lower, upper) > 0)
         {
             throw new GradeThresholdException(
                     "In Grade " + name + ", the lower grade threshold cannot exceed the upper grade threshold.");
@@ -132,7 +132,7 @@ public enum Grade {
     /**
      * @return the lower threshold
      */
-    public BigDecimal getLowerThreshold()
+    public double getLowerThreshold()
     {
         return lower;
     }
@@ -140,7 +140,7 @@ public enum Grade {
     /**
      * @return the upper threshold
      */
-    public BigDecimal getUpperThreshold()
+    public double getUpperThreshold()
     {
         return upper;
     }

@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,23 +26,23 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.graph.MutableNetwork;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-
 /**
- * Input Node which simply forms a place into which metric measures are to be
+ * Input Node which simply forms a place into which name measures are to be
  * stored in the graph.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class ValueNode extends Node {
 
@@ -49,34 +50,36 @@ public class ValueNode extends Node {
      * FIXME: This needs to be moved
      * Constant indicating that this is a value from a manual instrument
      */
-    public static final String     MANUAL = "ManualInstrument";
+    public static final String MANUAL = "ManualInstrument";
     /**
      * FIXME: This needs to be moved
      * Constant indicating that this is a measure which unions findings
      */
-    public static final String     UNION  = "FindingsUnionMeasureAggregation";
+    public static final String UNION = "FindingsUnionMeasureAggregation";
     /**
-     * Name of the tool providing the values for this metric
+     * Name of the tool providing the values for this name
      */
-    private final String           tool;
+    @Getter
+    private final String tool;
     /**
      * List of actual measurement values.
      * TODO Provide a means by which these values can be related to where they
      * came from (INode)
      */
-    private final List<BigDecimal> values;
+    @Getter
+    private final List<Double> values;
     /**
-     * Name of the metric for which the provided measures exist.
+     * Name of the name for which the provided measures exist.
      */
-    private String                 metric;
+    @Getter
+    @Setter
+    private String metric;
 
     /**
      * Constructs a new ValueNode which is contained in the given graph,
      * identified by the given key, extracted from the quamoco model entity with
      * the given identifier and measured by the tool with the given identifier
-     * 
-     * @param graph
-     *            Graph to which this node belongs
+     *
      * @param key
      *            Identifier of this node
      * @param owner
@@ -84,46 +87,36 @@ public class ValueNode extends Node {
      * @param tool
      *            Tool which provides the values for this node
      */
-    public ValueNode(final DirectedSparseGraph<Node, Edge> graph, final String key, final String owner,
-            final String tool)
-    {
+    public ValueNode(final String key, final String owner, final String tool) {
+        this(null, key, owner, tool);
+    }
+
+    public ValueNode(MutableNetwork<Node, Edge> graph, final String key, final String owner, final String tool) {
         super(graph, key, owner);
         this.tool = tool;
         values = Lists.newArrayList();
-        value = BigDecimal.ZERO;
+        value = 0.0;
     }
 
+
     /**
-     * @return the key identifying this ndoe
+     * @return the key identifying this node
      */
-    public String getKey()
-    {
+    public String getKey() {
         return getName();
-    }
-
-    /**
-     * @return tool providing measuments for this node
-     */
-    public String getTool()
-    {
-        return tool;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
-    {
-        if (!calculated)
-        {
-            value = BigDecimal.ZERO;
-            for (final BigDecimal v : values)
-            {
-                value = value.add(v);
-            }
-            // calculated = true;
+    public double getValue() {
+        value = 0.0;
+
+        for (final double v : values) {
+            value += v;
         }
+
         return value;
     }
 
@@ -131,8 +124,7 @@ public class ValueNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public String getXMLTag()
-    {
+    public String getXMLTag() {
         return String.format("<nodes name=\"%s\" owner=\"%s\" type=\"VALUE\" />", name, ownedBy);
     }
 
@@ -140,10 +132,8 @@ public class ValueNode extends Node {
      * @param key
      *            the key to set
      */
-    public void setKey(final String key)
-    {
-        if (key == null || key.isEmpty())
-        {
+    public void setKey(final String key) {
+        if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
@@ -154,19 +144,15 @@ public class ValueNode extends Node {
      * @param value
      *            A new measurement for this node
      */
-    public void addValue(final BigDecimal value)
-    {
+    public void addValue(final double value) {
         values.add(value);
-
-        this.value = this.value.add(value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getLowerResult()
-    {
+    public double getLowerResult() {
         return Collections.min(values);
     }
 
@@ -174,8 +160,7 @@ public class ValueNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getUpperResult()
-    {
+    public double getUpperResult() {
         return Collections.max(values);
     }
 
@@ -183,17 +168,7 @@ public class ValueNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public List<BigDecimal> getValues()
-    {
-        return values;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Finding> getFindings()
-    {
-        return Sets.newHashSet();
+    public List<Finding> getFindings() {
+        return Lists.newArrayList();
     }
 }

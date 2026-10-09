@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,61 +26,52 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor;
 
+import edu.montana.gsoc.msusel.quamoco.graph.edge.*;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
+import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
+import edu.montana.gsoc.msusel.quamoco.processor.normalizers.RangedNormalizer;
+import edu.montana.gsoc.msusel.quamoco.processor.normalizers.UnrangedNormalizer;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
-import edu.montana.gsoc.msusel.quamoco.processor.NormalizerFactory;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.RangedNormalizer;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.UnrangedNormalizer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * The class <code>NormalizerFactoryTest</code> contains tests for the class
  * <code>{@link NormalizerFactory}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:35 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class NormalizerFactoryTest {
+
     /**
      * Run the Normalizer createNormalizer(Edge,String,NormalizationRange)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateNormalizer_1() throws Exception
-    {
-        final NormalizerFactory fixture = NormalizerFactory.getInstance();
+    public void testCreateNormalizer_1() {
         final Edge edge = null;
         final String metric = "";
         final NormalizationRange range = NormalizationRange.CLASS;
 
-        final Normalizer result = fixture.createNormalizer(edge, metric, range);
+        final Normalizer result = NormalizerFactory.getInstance().createNormalizer(edge, metric, range);
 
         // add additional test code here
-        Assert.assertEquals(null, result);
+        assertNull(result);
     }
 
     /**
      * Run the Normalizer createNormalizer(Edge,String,NormalizationRange)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testCreateNormalizer_2() throws Exception
-    {
-        final NormalizerFactory fixture = NormalizerFactory.getInstance();
+    public void testCreateNormalizer_2() {
         final Edge edge = EasyMock.createMock(Edge.class);
         final String metric = null;
         final NormalizationRange range = NormalizationRange.CLASS;
@@ -87,26 +79,21 @@ public class NormalizerFactoryTest {
 
         EasyMock.replay(edge);
 
-        final Normalizer result = fixture.createNormalizer(edge, metric, range);
+        final Normalizer result = NormalizerFactory.getInstance().createNormalizer(edge, metric, range);
 
         // add additional test code here
         EasyMock.verify(edge);
         Assert.assertNotNull(result);
         Assert.assertTrue(result instanceof NullNormalizer);
-        Assert.assertEquals(null, result.getMetric());
+        assertNull(result.getMetric());
     }
 
     /**
      * Run the Normalizer createNormalizer(Edge,String,NormalizationRange)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testCreateNormalizer_3() throws Exception
-    {
-        final NormalizerFactory fixture = NormalizerFactory.getInstance();
+    public void testCreateNormalizer_3() {
         final Edge edge = EasyMock.createMock(Edge.class);
         final String metric = "";
         final NormalizationRange range = null;
@@ -114,27 +101,16 @@ public class NormalizerFactoryTest {
 
         EasyMock.replay(edge);
 
-        final Normalizer result = fixture.createNormalizer(edge, metric, range);
-
-        // add additional test code here
-        EasyMock.verify(edge);
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result instanceof NullNormalizer);
-        Assert.assertEquals("", result.getMetric());
-        Assert.assertEquals(null, result.getNormalizationRange());
+        final Normalizer result = NormalizerFactory.getInstance().createNormalizer(edge, metric, range);
+        assertEquals(NormalizationRange.NA, result.getRange());
     }
 
     /**
      * Run the Normalizer createNormalizer(Edge,String,NormalizationRange)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testCreateNormalizer_4() throws Exception
-    {
-        final NormalizerFactory fixture = NormalizerFactory.getInstance();
+    public void testCreateNormalizer_4() {
         final Edge edge = EasyMock.createMock(Edge.class);
         final String metric = "";
         final NormalizationRange range = NormalizationRange.CLASS;
@@ -142,78 +118,56 @@ public class NormalizerFactoryTest {
 
         EasyMock.replay(edge);
 
-        final Normalizer result = fixture.createNormalizer(edge, metric, range);
+        final Normalizer result = NormalizerFactory.getInstance().createNormalizer(edge, metric, range);
 
         // add additional test code here
         EasyMock.verify(edge);
         Assert.assertNotNull(result);
         Assert.assertTrue(result instanceof NullNormalizer);
-        Assert.assertEquals("", result.getMetric());
+        assertEquals("", result.getMetric());
     }
 
     /**
      * Run the Normalizer createNormalizer(Edge,String,NormalizationRange)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testCreateNormalizer_5() throws Exception
-    {
-        final NormalizerFactory fixture = NormalizerFactory.getInstance();
-        final Edge edge = EasyMock.createMock(Edge.class);
+    public void testCreateNormalizer_5() {
+        final Edge edge = mock(MeasureToFactorFindingsEdge.class);
         final String metric = "LOC";
         final NormalizationRange range = NormalizationRange.CLASS;
         // add mock object expectations here
 
-        EasyMock.replay(edge);
+        final Normalizer result = NormalizerFactory.getInstance().createNormalizer(edge, metric, range);
 
-        final Normalizer result = fixture.createNormalizer(edge, metric, range);
-
-        // add additional test code here
-        EasyMock.verify(edge);
         Assert.assertNotNull(result);
         Assert.assertTrue(result instanceof RangedNormalizer);
-        Assert.assertEquals("LOC", result.getMetric());
+        assertEquals("LOC", result.getMetric());
     }
 
     /**
      * Run the Normalizer createNormalizer(Edge,String,NormalizationRange)
      * method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testCreateNormalizer_6() throws Exception
-    {
-        final NormalizerFactory fixture = NormalizerFactory.getInstance();
-        final Edge edge = EasyMock.createMock(Edge.class);
+    public void testCreateNormalizer_6() {
+        NormalizerFactory fixture = NormalizerFactory.getInstance();
+        final Edge edge = mock(FindingToMeasureEdge.class);
         final String metric = "LOC";
         final NormalizationRange range = NormalizationRange.NA;
-        // add mock object expectations here
-
-        EasyMock.replay(edge);
 
         final Normalizer result = fixture.createNormalizer(edge, metric, range);
 
-        // add additional test code here
-        EasyMock.verify(edge);
         Assert.assertNotNull(result);
         Assert.assertTrue(result instanceof UnrangedNormalizer);
-        Assert.assertEquals("LOC", result.getMetric());
+        assertEquals("LOC", result.getMetric());
     }
 
     /**
      * Run the NormalizerFactory getInstance() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testGetInstance_1() throws Exception
-    {
+    public void testGetInstance_1() {
         final NormalizerFactory result = NormalizerFactory.getInstance();
         final NormalizerFactory result2 = NormalizerFactory.getInstance();
 
@@ -223,41 +177,15 @@ public class NormalizerFactoryTest {
         Assert.assertSame(result, result2);
     }
 
-    /**
-     * Perform pre-test initialization.
-     *
-     * @throws Exception
-     *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    @Before
-    public void setUp() throws Exception
-    {
-        // add additional set up code here
-    }
+//    @Test
+//    public void isFindingsOrNormalizable() {
+//    }
 
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
+//    @Test
+//    public void isBadRange() {
+//    }
 
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(NormalizerFactoryTest.class);
-    }
+//    @Test
+//    public void isBadMetric() {
+//    }
 }

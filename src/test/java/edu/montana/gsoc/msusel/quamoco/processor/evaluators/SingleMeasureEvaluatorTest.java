@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,28 +26,24 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.evaluators;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.junit.After;
+import com.google.common.collect.Lists;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.processor.evaluators.SingleMeasureEvaluator;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import java.util.List;
 
 /**
  * The class <code>SingleMeasureEvaluatorTest</code> contains tests for the
  * class <code>{@link SingleMeasureEvaluator}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:35 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class SingleMeasureEvaluatorTest {
 
@@ -54,74 +51,64 @@ public class SingleMeasureEvaluatorTest {
 
     /**
      * Run the SingleMeasureEvaluator(Node) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
-    public void testSingleMeasureEvaluator_1() throws Exception
-    {
-        final Node owner = new FactorNode(new DirectedSparseGraph<>(), "factor", "owners");
+    public void testSingleMeasureEvaluator_1() {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+        final Node owner = new FactorNode(graph, "factor", "owners");
 
         final SingleMeasureEvaluator result = new SingleMeasureEvaluator(owner);
 
-        // add additional test code here
+//         add additional test code here
         Assert.assertNotNull(result);
     }
 
     /**
-     * Run the BigDecimal evaluate(List<BigDecimal>) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
+     * Run the BigDecimal evaluate(List<Double>) method test.
      */
     @Test
-    public void testEvaluate_1() throws Exception
-    {
-        final List<BigDecimal> values = Lists.newArrayList();
+    public void testEvaluate_1() {
+        final List<Double> values = Lists.newArrayList();
 
-        values.add(new BigDecimal(100.0));
-        values.add(new BigDecimal(20.0));
-        values.add(new BigDecimal(-5.0));
+        values.add(100.0);
+        values.add(20.0);
+        values.add(-5.0);
 
-        final BigDecimal result = fixture.evaluate(values);
+        final double result = fixture.evaluate(values);
 
         // add additional test code here
-        Assert.assertEquals(new BigDecimal(115.0), result);
+        Assert.assertEquals(115.0, result, 0.001);
     }
 
     /**
-     * Run the BigDecimal evaluate(List<BigDecimal>) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
+     * Run the BigDecimal evaluate(List<Double>) method test.
      */
     @Test
-    public void testEvaluate_2() throws Exception
-    {
-        final List<BigDecimal> values = Lists.newArrayList();
+    public void testEvaluate_2() {
+        final List<Double> values = Lists.newArrayList();
 
-        final BigDecimal result = fixture.evaluate(values);
+        final double result = fixture.evaluate(values);
 
         // add additional test code here
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     /**
-     * Run the BigDecimal evaluate(List<BigDecimal>) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
+     * Run the BigDecimal evaluate(List<Double>) method test.
      */
     @Test
-    public void testEvaluate_3() throws Exception
-    {
-        final List<BigDecimal> values = null;
+    public void testEvaluate_3() {
+        final List<Double> values = null;
 
-        final BigDecimal result = fixture.evaluate(values);
+        final double result = fixture.evaluate(values);
 
         // add additional test code here
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     /**
@@ -129,36 +116,16 @@ public class SingleMeasureEvaluatorTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Before
     public void setUp() throws Exception
     {
-        fixture = new SingleMeasureEvaluator(new FactorNode(new DirectedSparseGraph<>(), "factor", "owner"));
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(SingleMeasureEvaluatorTest.class);
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+        fixture = new SingleMeasureEvaluator(new FactorNode(graph, "factor", "owner"));
     }
 }

@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,45 +26,42 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import org.junit.After;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.isu.isuese.datamodel.File;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.processor.NullProcessor;
+import org.javalite.activejdbc.test.DBSpec;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.montana.gsoc.msusel.node.FileNode;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
-import edu.montana.gsoc.msusel.quamoco.graph.node.FindingNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.processor.NullProcessor;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class <code>FindingNodeTest</code> contains tests for the class
  * <code>{@link FindingNode}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:38 PM
- * @author fate
- * @version $Revision: BigDecimal.ONE $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
-public class FindingNodeTest {
+public class FindingNodeTest extends DBSpec {
 
     private FindingNode fixture;
 
     /**
-     * Run the FindingNode(DirectedSparseGraph
+     * Run the FindingNode(MutableNetwork
      * <Node,Edge>,String,String,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testFindingNode_1() throws Exception
-    {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+    public void testFindingNode_1() {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final String key = "node";
         final String owner = "owner";
         final String ruleName = "rule";
@@ -74,26 +72,22 @@ public class FindingNodeTest {
         // add additional test code here
         Assert.assertNotNull(result);
         Assert.assertEquals("rule", result.getRuleName());
-        Assert.assertEquals(null, result.getXMLTag());
+        Assert.assertNull(result.getXMLTag());
         Assert.assertEquals("tool", result.getToolName());
-        Assert.assertEquals(BigDecimal.ZERO, result.getValue());
+        Assert.assertEquals(0.0, result.getValue(), 0.001);
         Assert.assertEquals("owner", result.getOwnedBy());
         Assert.assertEquals("", result.getDescription());
-        Assert.assertEquals(null, result.getProcessor());
+        Assert.assertNull(result.getProcessor());
         Assert.assertEquals("node", result.getName());
     }
 
     /**
      * Run the void addFinding(Finding) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testAddFinding_1() throws Exception
-    {
+    public void testAddFinding_1() {
         Assert.assertTrue(fixture.getFindings().isEmpty());
-        final Finding finding = new Finding(FileNode.builder("path").create(), "issueKey", "issueName");
+        final Finding finding = new FileFinding(File.builder().fileKey("path").create(), "issueKey", "issueName");
 
         fixture.addFinding(finding);
 
@@ -104,15 +98,11 @@ public class FindingNodeTest {
 
     /**
      * Run the Set<Finding> getFindings() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetFindings_1() throws Exception
-    {
-        fixture.addFinding(new Finding(FileNode.builder("path").create(), "issueKey", "issueName"));
-        final Set<Finding> result = fixture.getFindings();
+    public void testGetFindings_1() {
+        fixture.addFinding(new FileFinding(File.builder().fileKey("path").create(), "issueKey", "issueName"));
+        final List<Finding> result = fixture.getFindings();
 
         // add additional test code here
         Assert.assertNotNull(result);
@@ -121,27 +111,19 @@ public class FindingNodeTest {
 
     /**
      * Run the BigDecimal getLowerResult() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetLowerResult_1() throws Exception
-    {
-        final BigDecimal result = fixture.getLowerResult();
+    public void testGetLowerResult_1() {
+        final double result = fixture.getLowerResult();
 
-        Assert.assertEquals(BigDecimal.ZERO, result);
+        Assert.assertEquals(0.0, result, 0.001);
     }
 
     /**
      * Run the String getRuleName() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetRuleName_1() throws Exception
-    {
+    public void testGetRuleName_1() {
         final String result = fixture.getRuleName();
 
         // add additional test code here
@@ -150,13 +132,9 @@ public class FindingNodeTest {
 
     /**
      * Run the String getToolName() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetToolName_1() throws Exception
-    {
+    public void testGetToolName_1() {
         final String result = fixture.getToolName();
 
         // add additional test code here
@@ -165,42 +143,30 @@ public class FindingNodeTest {
 
     /**
      * Run the BigDecimal getUpperResult() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetUpperResult_1() throws Exception
-    {
-        final BigDecimal result = fixture.getUpperResult();
+    public void testGetUpperResult_1() {
+        final double result = fixture.getUpperResult();
 
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the BigDecimal getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetValue_1() throws Exception
-    {
-        final BigDecimal result = fixture.getValue();
+    public void testGetValue_1() {
+        final double result = fixture.getValue();
 
         // add additional test code here
-        Assert.assertEquals(BigDecimal.ZERO, result);
+        Assert.assertEquals(0.0, result, 0.001);
     }
 
     /**
      * Run the void setRuleName(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetRuleName_1() throws Exception
-    {
+    public void testSetRuleName_1() {
         final String ruleName = "other";
 
         fixture.setRuleName(ruleName);
@@ -214,37 +180,17 @@ public class FindingNodeTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Before
     public void setUp() throws Exception
     {
-        fixture = new FindingNode(new DirectedSparseGraph<>(), "node", "owner", "rule", "tool");
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+        fixture = new FindingNode(graph, "node", "owner", "rule", "tool");
         fixture.processor = new NullProcessor(fixture);
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(FindingNodeTest.class);
     }
 }

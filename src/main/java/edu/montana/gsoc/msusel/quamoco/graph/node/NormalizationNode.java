@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +26,11 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
-
+import com.google.common.graph.MutableNetwork;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Node originally meant to provide the means by which normalization was to
@@ -37,17 +38,23 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
  * FIXME: Remove this class
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class NormalizationNode extends MeasureNode {
 
+    @Getter
+    @Setter
     private NormalizationRange range;
 
     /**
-     * @param graph
      * @param owner
      */
-    public NormalizationNode(final DirectedSparseGraph<Node, Edge> graph, final String name, final String owner)
+    public NormalizationNode(final String name, final String owner)
+    {
+        this(null, name, owner);
+    }
+
+    public NormalizationNode(MutableNetwork<Node, Edge> graph, final String name, final String owner)
     {
         super(graph, name, owner);
         range = NormalizationRange.NA;
@@ -57,25 +64,9 @@ public class NormalizationNode extends MeasureNode {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
+    public double getValue()
     {
-        return BigDecimal.ZERO;
-    }
-
-    /**
-     * @return
-     */
-    public NormalizationRange getRange()
-    {
-        return range;
-    }
-
-    /**
-     * @param range
-     */
-    public void setRange(final NormalizationRange range)
-    {
-        this.range = range;
+        return 0.0;
     }
 
     /**

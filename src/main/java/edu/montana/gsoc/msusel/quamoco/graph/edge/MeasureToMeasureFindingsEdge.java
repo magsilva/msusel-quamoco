@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,20 +26,20 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
 import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Edge connecting two MeasureNodes but which only aggregates Finding Sets
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.23.0
  */
 public class MeasureToMeasureFindingsEdge extends AbstractEdge implements FindingsEdge {
 
@@ -62,18 +63,18 @@ public class MeasureToMeasureFindingsEdge extends AbstractEdge implements Findin
      * {@inheritDoc}
      */
     @Override
-    public Set<Finding> getFindings()
+    public List<Finding> getFindings()
     {
-        final MeasureNode sn = (MeasureNode) src;
-        return Sets.newHashSet(sn.getFindings());
+        final MeasureNode sn = (MeasureNode) source;
+        return Lists.newArrayList(sn.getFindings());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
+    public double getValue()
     {
-        return BigDecimal.ZERO;
+        return 0.0;
     }
 }

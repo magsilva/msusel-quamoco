@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +27,10 @@
 package edu.montana.gsoc.msusel.quamoco.processor;
 
 import edu.montana.gsoc.msusel.quamoco.graph.INode;
+import edu.montana.gsoc.msusel.quamoco.processor.evaluators.ManualEvaluator;
 import edu.montana.gsoc.msusel.quamoco.graph.node.FactorMethod;
 import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
-import edu.montana.gsoc.msusel.quamoco.processor.evaluators.ManualEvaluator;
+import edu.montana.gsoc.msusel.quamoco.processor.evaluators.MeanEvaluator;
 import edu.montana.gsoc.msusel.quamoco.processor.evaluators.SingleMeasureEvaluator;
 import edu.montana.gsoc.msusel.quamoco.processor.evaluators.WeightedSumEvaluator;
 
@@ -37,7 +39,7 @@ import edu.montana.gsoc.msusel.quamoco.processor.evaluators.WeightedSumEvaluator
  * the node's current state.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class EvaluatorFactory extends ProcessorFactory {
 
@@ -79,23 +81,17 @@ public class EvaluatorFactory extends ProcessorFactory {
     {
         if (node instanceof FactorNode)
         {
-            final FactorNode fnode = (FactorNode) node;
+            final FactorNode factorNode = (FactorNode) node;
 
-            if (fnode.getMethod().equals(FactorMethod.ONE))
-            {
-                return new SingleMeasureEvaluator(fnode);
-            }
-            else if (fnode.getMethod().equals(FactorMethod.RANKING))
-            {
-                return new WeightedSumEvaluator(fnode);
-            }
-            else if (fnode.getMethod().equals(FactorMethod.MANUAL))
-            {
-                return new ManualEvaluator(fnode);
-            }
-            else
-            {
-                return new WeightedSumEvaluator(fnode);
+            switch (factorNode.getMethod()) {
+                case FactorMethod.ONE:
+                    return new SingleMeasureEvaluator(factorNode);
+                case FactorMethod.MEAN:
+                    return new MeanEvaluator(factorNode);
+                case FactorMethod.MANUAL:
+                    return new ManualEvaluator(factorNode);
+                default:
+                    return new WeightedSumEvaluator(factorNode);
             }
         }
 

@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +35,7 @@ import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
  * distilled quality model graph.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public abstract class ProcessorFactory {
 
@@ -46,7 +47,7 @@ public abstract class ProcessorFactory {
     }
 
     /**
-     * Internal private class used to hold the singlton instance of each type of
+     * Internal private class used to hold the singleton instance of each type of
      * processor factory
      * 
      * @author Isaac Griffith

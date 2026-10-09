@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,21 +29,21 @@ package edu.montana.gsoc.msusel.quamoco.processor;
 import edu.montana.gsoc.msusel.quamoco.graph.INode;
 import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureMethod;
 import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureType;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
+import edu.montana.gsoc.msusel.quamoco.model.MeasureType;
 import edu.montana.gsoc.msusel.quamoco.processor.aggregators.FindingsIntersectAggregator;
+import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMeanAggregator;
+import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMinAggregator;
+import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMedianAggregator;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import edu.montana.gsoc.msusel.quamoco.processor.aggregators.FindingsUnionAggregator;
 import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMaxAggregator;
-import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMeanAggregator;
-import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMedianAggregator;
-import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMinAggregator;
 
 /**
  * Factory used to select the appropriate aggregator for a given MeasureNode
  * based on its current state.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class AggregatorFactory extends ProcessorFactory {
 
@@ -84,36 +85,30 @@ public class AggregatorFactory extends ProcessorFactory {
     {
         if (node instanceof MeasureNode)
         {
-            final MeasureNode mnode = (MeasureNode) node;
+            final MeasureNode measureNode = (MeasureNode) node;
 
-            if (mnode.getType().equals(MeasureType.FINDINGS))
+            if (measureNode.getType().equals(MeasureType.FINDINGS))
             {
-                if (mnode.getMethod().equals(MeasureMethod.UNION))
+                if (measureNode.getMethod().equals(MeasureMethod.UNION))
                 {
-                    return new FindingsUnionAggregator(mnode);
+                    return new FindingsUnionAggregator(measureNode);
                 }
-                else if (mnode.getMethod().equals(MeasureMethod.INTERSECT))
+                else if (measureNode.getMethod().equals(MeasureMethod.INTERSECT))
                 {
-                    return new FindingsIntersectAggregator(mnode);
+                    return new FindingsIntersectAggregator(measureNode);
                 }
             }
-            else if (mnode.getType().equals(MeasureType.NUMBER))
+            else if (measureNode.getType().equals(MeasureType.NUMBER))
             {
-                if (mnode.getMethod().equals(MeasureMethod.MEAN))
-                {
-                    return new NumberMeanAggregator(mnode);
-                }
-                else if (mnode.getMethod().equals(MeasureMethod.MAX))
-                {
-                    return new NumberMaxAggregator(mnode);
-                }
-                else if (mnode.getMethod().equals(MeasureMethod.MIN))
-                {
-                    return new NumberMinAggregator(mnode);
-                }
-                else if (mnode.getMethod().equals(MeasureMethod.MEDIAN))
-                {
-                    return new NumberMedianAggregator(mnode);
+                switch (measureNode.getMethod()) {
+                    case MeasureMethod.MEAN:
+                        return new NumberMeanAggregator(measureNode);
+                    case MeasureMethod.MAX:
+                        return new NumberMaxAggregator(measureNode);
+                    case MeasureMethod.MIN:
+                        return new NumberMinAggregator(measureNode);
+                    case MeasureMethod.MEDIAN:
+                        return new NumberMedianAggregator(measureNode);
                 }
             }
         }

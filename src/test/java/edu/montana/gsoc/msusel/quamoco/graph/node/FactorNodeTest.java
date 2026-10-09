@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,29 +26,21 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
-
-import org.junit.After;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.ValueToMeasureEdge;
+import edu.montana.gsoc.msusel.quamoco.processor.NullProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.ValueToMeasureEdge;
-import edu.montana.gsoc.msusel.quamoco.graph.node.FactorMethod;
-import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.graph.node.ValueNode;
-import edu.montana.gsoc.msusel.quamoco.processor.NullProcessor;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 
 /**
  * The class <code>FactorNodeTest</code> contains tests for the class
  * <code>{@link FactorNode}</code>.
  *
- * @generatedBy CodePro at 5/30/15 3:38 PM
- * @author isaac
- * @version $Revision: BigDecimal.ONE $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class FactorNodeTest {
 
@@ -56,42 +49,43 @@ public class FactorNodeTest {
     /**
      * Run the FactorNode(DirectedSparseGraph<Node,Edge>,String,String)
      * constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testFactorNode_1() throws Exception
-    {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+    public void testFactorNode_1() {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final String name = "factor";
         final String owner = "owner";
 
         final FactorNode result = new FactorNode(graph, name, owner);
-        
+
         // TODO: add additional test code here
         Assert.assertNotNull(result);
         Assert.assertEquals(FactorMethod.MEAN, result.getMethod());
         Assert.assertEquals("owner", result.getOwnedBy());
         Assert.assertEquals("", result.getDescription());
-        Assert.assertEquals("factor", result.toString());
+        Assert.assertEquals("Node(name=factor)", result.toString());
         Assert.assertEquals("factor", result.getName());
     }
 
     /**
      * Run the FactorNode(DirectedSparseGraph<Node,Edge>,String,String,long)
      * constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testFactorNode_2() throws Exception
-    {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+    public void testFactorNode_2() {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final String name = "factor";
         final String owner = "owner";
-        final long id = 2L;
 
         final FactorNode result = new FactorNode(graph, name, owner);
 
@@ -100,19 +94,15 @@ public class FactorNodeTest {
         Assert.assertEquals(FactorMethod.MEAN, result.getMethod());
         Assert.assertEquals("owner", result.getOwnedBy());
         Assert.assertEquals("", result.getDescription());
-        Assert.assertEquals("factor", result.toString());
+        Assert.assertEquals("Node(name=factor)", result.toString());
         Assert.assertEquals("factor", result.getName());
     }
 
     /**
      * Run the String getMethod() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testGetMethod_1() throws Exception
-    {
+    public void testGetMethod_1() {
         final String result = fixture.getMethod();
 
         // TODO: add additional test code here
@@ -121,46 +111,35 @@ public class FactorNodeTest {
 
     /**
      * Run the BigDecimal getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testGetValue_1() throws Exception
-    {
+    public void testGetValue_1() {
         fixture.setProcessor(new NullProcessor(fixture));
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the BigDecimal getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testGetValue_2() throws Exception
-    {
+    public void testGetValue_2() {
         fixture.setProcessor(new NullProcessor(fixture));
-        fixture.value = BigDecimal.ONE;
+        fixture.setValue(1.0);
+        fixture.calculated = true;
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the void setMethod(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testSetMethod_1() throws Exception
-    {
+    public void testSetMethod_1() {
         try
         {
             fixture.setMethod("");
@@ -198,41 +177,39 @@ public class FactorNodeTest {
     }
 
     @Test
-    public void testGetUpperResult_1() throws Exception
-    {
+    public void testGetUpperResult_1() {
         final ValueNode vn1 = new ValueNode(fixture.getGraph(), "vn1", "owner", "tool");
-        vn1.addValue(new BigDecimal(100));
+        vn1.addValue(100.0);
         final ValueNode vn2 = new ValueNode(fixture.getGraph(), "vn2", "owner", "tool");
-        vn2.addValue(new BigDecimal(150));
+        vn2.addValue(150.0);
         final ValueNode vn3 = new ValueNode(fixture.getGraph(), "vn3", "owner", "tool");
-        vn3.addValue(new BigDecimal(200));
+        vn3.addValue(200.0);
 
-        fixture.getGraph().addEdge(new ValueToMeasureEdge("edge1", vn1, fixture), vn1, fixture);
-        fixture.getGraph().addEdge(new ValueToMeasureEdge("edge1", vn2, fixture), vn2, fixture);
-        fixture.getGraph().addEdge(new ValueToMeasureEdge("edge1", vn3, fixture), vn3, fixture);
+        fixture.getGraph().addEdge(vn1, fixture, new ValueToMeasureEdge("edge1", vn1, fixture));
+        fixture.getGraph().addEdge(vn2, fixture, new ValueToMeasureEdge("edge2", vn2, fixture));
+        fixture.getGraph().addEdge(vn3, fixture, new ValueToMeasureEdge("edge3", vn3, fixture));
 
-        final BigDecimal result = fixture.getUpperResult();
+        final double result = fixture.getUpperResult();
 
-        Assert.assertEquals(new BigDecimal(200), result);
+        Assert.assertEquals(200.0, result, 0.001);
     }
 
     @Test
-    public void testGetLowerResult_1() throws Exception
-    {
+    public void testGetLowerResult_1() {
         final ValueNode vn1 = new ValueNode(fixture.getGraph(), "vn1", "owner", "tool");
-        vn1.addValue(new BigDecimal(100));
+        vn1.addValue(100.0);
         final ValueNode vn2 = new ValueNode(fixture.getGraph(), "vn2", "owner", "tool");
-        vn2.addValue(new BigDecimal(150));
+        vn2.addValue(150.0);
         final ValueNode vn3 = new ValueNode(fixture.getGraph(), "vn3", "owner", "tool");
-        vn3.addValue(new BigDecimal(200));
+        vn3.addValue(200.0);
 
-        fixture.getGraph().addEdge(new ValueToMeasureEdge("edge1", vn1, fixture), vn1, fixture);
-        fixture.getGraph().addEdge(new ValueToMeasureEdge("edge1", vn2, fixture), vn2, fixture);
-        fixture.getGraph().addEdge(new ValueToMeasureEdge("edge1", vn3, fixture), vn3, fixture);
+        fixture.getGraph().addEdge(vn1, fixture, new ValueToMeasureEdge("edge1", vn1, fixture));
+        fixture.getGraph().addEdge(vn2, fixture, new ValueToMeasureEdge("edge2", vn2, fixture));
+        fixture.getGraph().addEdge(vn3, fixture, new ValueToMeasureEdge("edge3", vn3, fixture));
 
-        final BigDecimal result = fixture.getLowerResult();
+        final double result = fixture.getLowerResult();
 
-        Assert.assertEquals(new BigDecimal(100), result);
+        Assert.assertEquals(100.0, result, 0.001);
     }
 
     /**
@@ -240,36 +217,16 @@ public class FactorNodeTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Before
     public void setUp() throws Exception
     {
-        fixture = new FactorNode(new DirectedSparseGraph<>(), "factor", "owner");
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:38 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // TODO: add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 5/30/15 3:38 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(FactorNodeTest.class);
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+        fixture = new FactorNode(graph, "factor", "owner");
     }
 }

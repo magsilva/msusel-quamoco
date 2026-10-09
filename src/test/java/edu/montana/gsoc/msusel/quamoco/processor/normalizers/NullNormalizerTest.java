@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,43 +26,37 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.normalizers;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import org.junit.After;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import edu.isu.isuese.datamodel.File;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.MeasureToMeasureNumberEdge;
+import edu.montana.gsoc.msusel.quamoco.graph.node.FileFinding;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
+import org.javalite.activejdbc.test.DBSpec;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Sets;
-
-import edu.montana.gsoc.msusel.node.FileNode;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.MeasureToMeasureNumberEdge;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class <code>NullNormalizerTest</code> contains tests for the class
  * <code>{@link NullNormalizer}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:34 PM
- * @author fate
- * @version $Revision: BigDecimal.ONE $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
-public class NullNormalizerTest {
+public class NullNormalizerTest extends DBSpec {
 
     private NullNormalizer fixture;
 
     /**
      * Run the NullNormalizer(Edge,String,NormalizationRange) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:34 PM
      */
     @Test
-    public void testNullNormalizer_1() throws Exception
-    {
+    public void testNullNormalizer_1() {
         final NormalizationRange range = NormalizationRange.CLASS;
 
         final NullNormalizer result = new NullNormalizer(
@@ -74,35 +69,27 @@ public class NullNormalizerTest {
 
     /**
      * Run the BigDecimal normalize(List<Finding>) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:34 PM
      */
     @Test
-    public void testNormalize_2() throws Exception
-    {
-        final Set<Finding> findings = Sets.newHashSet();
-        findings.add(new Finding(FileNode.builder("path").create(), "issue", "issue"));
-        final BigDecimal result = fixture.normalize(findings);
+    public void testNormalize_2() {
+        final List<Finding> findings = Lists.newArrayList();
+        findings.add(new FileFinding(File.builder().fileKey("path").create(), "issue", "issue"));
+        final double result = fixture.normalize(findings);
 
         // add additional test code here
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(0.0, result, 0.001);
     }
 
     /**
      * Run the BigDecimal normalize(List<Finding>) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:34 PM
      */
     @Test
-    public void testNormalize_3() throws Exception
-    {
-        final Set<Finding> findings = null;
-        final BigDecimal result = fixture.normalize(findings);
+    public void testNormalize_3() {
+        final List<Finding> findings = null;
+        final double result = fixture.normalize(findings);
 
         // add additional test code here
-        Assert.assertEquals(BigDecimal.ONE, result);
+        Assert.assertEquals(0.0, result, 0.001);
     }
 
     /**
@@ -110,37 +97,10 @@ public class NullNormalizerTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:34 PM
      */
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         fixture = new NullNormalizer(
                 new MeasureToMeasureNumberEdge("edge", null, null), "LOC", NormalizationRange.CLASS);
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:34 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:34 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(NullNormalizerTest.class);
     }
 }

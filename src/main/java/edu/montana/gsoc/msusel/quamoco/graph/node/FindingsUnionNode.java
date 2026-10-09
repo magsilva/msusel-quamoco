@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,27 +26,28 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import com.google.common.graph.MutableNetwork;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.FindingsEdge;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * Node which simply constructs a union of all input findings nodes.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class FindingsUnionNode extends Node {
 
     /**
-     * The unioned set of findings.
+     * The union-ed set of findings.
      */
-    private final Set<Finding> findings;
+    private final List<Finding> findings;
 
     /**
      * Constructs a new Node which is contained in the given graph,
@@ -53,48 +55,48 @@ public class FindingsUnionNode extends Node {
      * with
      * the given identifier.
      * 
-     * @param graph
-     *            Graph to which this node belongs
      * @param name
      *            Identifier of this node
      * @param owner
      *            Identifier of the quamoco model entity this node came from
      */
-    public FindingsUnionNode(final DirectedSparseGraph<Node, Edge> graph, final String name, final String owner)
+    public FindingsUnionNode(final String name, final String owner)
+    {
+        this(null, name, owner);
+    }
+
+    public FindingsUnionNode(MutableNetwork<Node, Edge> graph, final String name, final String owner)
     {
         super(graph, name, owner);
-        findings = Sets.newHashSet();
+        findings = Lists.newArrayList();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getLowerResult()
+    public double getLowerResult()
     {
-        // TODO Auto-generated method stub
-        return BigDecimal.ZERO;
+        return 0.0;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getUpperResult()
+    public double getUpperResult()
     {
-        // TODO Auto-generated method stub
-        return BigDecimal.ONE;
+        return 1.0;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
+    public double getValue()
     {
-        // TODO Auto-generated method stub
-        calculated = true;
-        return BigDecimal.ZERO;
+//        calculated = true;
+        return 1.0;
     }
 
     /**
@@ -111,11 +113,11 @@ public class FindingsUnionNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public Set<Finding> getFindings()
+    public List<Finding> getFindings()
     {
         if (findings.isEmpty())
         {
-            for (final Edge e : graph.getInEdges(this))
+            for (final Edge e : graph.inEdges(this))
             {
                 if (e instanceof FindingsEdge)
                 {

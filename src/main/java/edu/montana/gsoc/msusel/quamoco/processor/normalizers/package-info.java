@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,11 +29,12 @@
  * Implementation. Normalizers are used to convert a set of findings into a
  * value representing the percentage of the code affected by that set of
  * findings. Hence normalization is simply performed by summing the total of a
- * given metric over the affected range/system (if un-ranged) and dividing by
- * the total of that same metric. Thus the value will always be between 0.0 and
+ * given name over the affected range/system (if un-ranged) and dividing by
+ * the total of that same name. Thus the value will always be between 0.0 and
  * 1.0. Finally, there is also the notion of a NullNormalizer which does
  * nothing.
  *
  * @author Isaac Griffith
+ * @version 1.3.0
  */
 package edu.montana.gsoc.msusel.quamoco.processor.normalizers;

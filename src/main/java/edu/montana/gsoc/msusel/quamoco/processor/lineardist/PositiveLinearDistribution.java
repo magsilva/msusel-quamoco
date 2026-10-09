@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +26,11 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.lineardist;
 
-import java.math.BigDecimal;
-
 /**
  * Convenience class for defining a Positive linear distribution
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class PositiveLinearDistribution extends AbstractLinearDistribution {
 
@@ -39,10 +38,10 @@ public class PositiveLinearDistribution extends AbstractLinearDistribution {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal calculate(final BigDecimal maxPoints, final BigDecimal proportion)
+    public double calculate(final double maxPoints, final double proportion)
     {
         // return proportion;
-        return super.calculate(proportion, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ONE, maxPoints);
+        return super.calculate(proportion, 0.0, 0.0, maxPoints, 1.0);
     }
 
 }

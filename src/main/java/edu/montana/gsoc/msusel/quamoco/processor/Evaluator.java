@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +26,17 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor;
 
-import java.math.BigDecimal;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.graph.edge.RankedEdge;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 
 /**
  * Evaluator -
  *
  * @author Isaac Griffith
+ * @version 1.3.0
  */
 public abstract class Evaluator extends Processor {
 
@@ -52,34 +52,34 @@ public abstract class Evaluator extends Processor {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal process()
+    public double process()
     {
-        final List<BigDecimal> values = new ArrayList<>();
+        final List<Double> values = new ArrayList<>();
 
-        for (final Edge edge : owner.getGraph().getInEdges(owner))
+        for (final Edge edge : owner.getGraph().inEdges(owner))
         {
-            if (edge instanceof RankedEdge)
-            {
-                if (((RankedEdge) edge).getRank().compareTo(BigDecimal.ZERO) <= 0)
-                    continue;
-            }
+//            if (edge instanceof RankedEdge)
+//            {
+//                if (Double.compare(((RankedEdge) edge).getRank(), 0.0) <= 0)
+//                    continue;
+//            }
             values.addAll(edge.getValues());
         }
 
-        return thresholdValue(evaluate(values));
+        return evaluate(values);
     }
 
     /**
      * @param value
      * @return
      */
-    private BigDecimal thresholdValue(BigDecimal value)
+    private double thresholdValue(double value)
     {
-        if (value.compareTo(BigDecimal.ZERO) < 0)
-            return BigDecimal.ZERO;
+        if (Double.compare(value, 0.0) < 0)
+            return 0.0;
 
-        if (value.compareTo(BigDecimal.ONE) > 0)
-            return BigDecimal.ONE;
+        if (Double.compare(value, 1.0) > 0)
+            return 1.0;
 
         return value;
     }
@@ -88,5 +88,5 @@ public abstract class Evaluator extends Processor {
      * @param valueMap
      * @return
      */
-    protected abstract BigDecimal evaluate(List<BigDecimal> valueMap);
+    protected abstract double evaluate(List<Double> valueMap);
 }

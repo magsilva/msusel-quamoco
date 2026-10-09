@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,39 +26,32 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor;
 
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
+import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
+import edu.montana.gsoc.msusel.quamoco.processor.normalizers.RangedNormalizer;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
-import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.NullNormalizer;
-import edu.montana.gsoc.msusel.quamoco.processor.normalizers.RangedNormalizer;
-
 /**
  * The class <code>NormalizerTest</code> contains tests for the class
  * <code>{@link Normalizer}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:35 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class NormalizerTest {
 
 	private Normalizer fixture;
 
 	/**
-	 * Run the String getMetric() method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
+	 * Run the String getName() method test.
 	 */
 	@Test
-	public void testNormalizer_1() throws Exception {
+	public void testNormalizer_1() {
 		final Edge edge = EasyMock.createMock(Edge.class);
 		final String metric = "LOC";
 		final NormalizationRange range = NormalizationRange.CLASS;
@@ -72,14 +66,10 @@ public class NormalizerTest {
 	}
 
 	/**
-	 * Run the String getMetric() method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
+	 * Run the String getName() method test.
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testNormalizer_2() throws Exception {
+	public void testNormalizer_2() {
 		final String metric = "LOC";
 		final NormalizationRange range = NormalizationRange.CLASS;
 
@@ -87,14 +77,10 @@ public class NormalizerTest {
 	}
 
 	/**
-	 * Run the String getMetric() method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
+	 * Run the String getName() method test.
 	 */
 	@Test
-	public void testGetMetric_1() throws Exception {
+	public void testGetMetric_1() {
 		final String result = fixture.getMetric();
 
 		// add additional test code here
@@ -103,14 +89,10 @@ public class NormalizerTest {
 
 	/**
 	 * Run the NormalizationRange getNormalizationRange() method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
 	 */
 	@Test
-	public void testGetNormalizationRange_1() throws Exception {
-		final NormalizationRange result = fixture.getNormalizationRange();
+	public void testGetNormalizationRange_1() {
+		final NormalizationRange result = fixture.getRange();
 
 		// add additional test code here
 		Assert.assertNotNull(result);
@@ -124,36 +106,9 @@ public class NormalizerTest {
 	 *
 	 * @throws Exception
 	 *             if the initialization fails for some reason
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
 	 */
 	@Before
 	public void setUp() throws Exception {
 		fixture = new NullNormalizer(EasyMock.createNiceMock(Edge.class), "LOC", NormalizationRange.CLASS);
-	}
-
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *             if the clean-up fails for some reason
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
-	 */
-	@After
-	public void tearDown() throws Exception {
-		// Add additional tear down code here
-	}
-
-	/**
-	 * Launch the test.
-	 *
-	 * @param args
-	 *            the command line arguments
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
-	 */
-	public static void main(final String[] args) {
-		new org.junit.runner.JUnitCore().run(NormalizerTest.class);
 	}
 }

@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,27 +26,29 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.aggregators;
 
-import java.util.Set;
-
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import com.google.common.graph.MutableNetwork;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.FindingsEdge;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import edu.montana.gsoc.msusel.quamoco.processor.FindingsAggregator;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * A findings based aggregator for measures with type FINDINGS. Simply this
  * collects the incoming findings sets and returns the union of all the sets.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class FindingsUnionAggregator extends FindingsAggregator {
 
     /**
-     * Constructs a new FindignsUnionAggregator for the given node.
+     * Constructs a new FindingsUnionAggregator for the given node.
      * 
      * @param owner
      *            The node which contains and uses this aggregator
@@ -59,16 +62,16 @@ public class FindingsUnionAggregator extends FindingsAggregator {
      * {@inheritDoc}
      */
     @Override
-    protected Set<Finding> aggregate()
+    protected List<Finding> aggregate()
     {
-        final DirectedSparseGraph<Node, Edge> graph = owner.getGraph();
+        final MutableNetwork<Node, Edge> graph = owner.getGraph();
+        final List<Finding> retVal = Lists.newArrayList();
 
-        final Set<Finding> retVal = Sets.newHashSet();
-
-        for (final Edge edge : graph.getInEdges(owner))
+        for (final Edge edge : graph.inEdges(owner))
         {
-            final Node other = graph.getOpposite(owner, edge);
-            retVal.addAll(other.getFindings());
+            if (edge instanceof FindingsEdge) {
+                retVal.addAll(((FindingsEdge) edge).getFindings());
+            }
         }
 
         return retVal;

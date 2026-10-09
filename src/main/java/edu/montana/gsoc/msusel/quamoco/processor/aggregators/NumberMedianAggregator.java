@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,22 +26,19 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.aggregators;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import edu.montana.gsoc.msusel.quamoco.processor.Aggregator;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A value based aggregator for measures with type NUMBER. Simply this collects
  * the incoming values and returns the median of the set.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class NumberMedianAggregator extends Aggregator {
 
@@ -59,29 +57,28 @@ public class NumberMedianAggregator extends Aggregator {
      * {@inheritDoc}
      */
     @Override
-    protected BigDecimal aggregate(final List<BigDecimal> values)
+    protected double aggregate(final List<Double> values)
     {
         if (values == null || values.isEmpty())
         {
-            return BigDecimal.ZERO;
+            return 0.0;
         }
 
-        final List<BigDecimal> temp = Lists.newArrayList();
+        final List<Double> temp = Lists.newArrayList();
         temp.addAll(values);
         if (!temp.isEmpty())
         {
             Collections.sort(temp);
             if (temp.size() % 2 == 0)
             {
-                return (temp.get(temp.size() / 2 - 1).add(temp.get(temp.size() / 2)))
-                        .divide(new BigDecimal(2), 15, RoundingMode.HALF_UP);
+                return (temp.get(temp.size() / 2 - 1) + temp.get(temp.size() / 2)) / 2;
             }
             else
             {
                 return temp.get(temp.size() / 2);
             }
         }
-        return BigDecimal.ZERO;
+        return 0.0;
     }
 
 }

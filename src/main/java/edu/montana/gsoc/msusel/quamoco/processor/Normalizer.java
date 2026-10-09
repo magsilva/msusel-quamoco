@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,92 +26,72 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
-import edu.montana.gsoc.msusel.quamoco.model.qm.NormalizationRange;
+import edu.montana.gsoc.msusel.quamoco.model.NormalizationRange;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Normalizer -
  *
  * @author Isaac Griffith
+ * @version 1.3.0
  */
 public abstract class Normalizer {
 
     /**
      * Edge containing this normalizer
      */
-    protected Edge               owner;
+    @Getter
+    @Setter
+    protected Edge owner;
     /**
      * Range of normalization
      */
+    @Getter
+    @Setter
     protected NormalizationRange range;
     /**
-     * Name of the normalization metric
+     * Name of the normalization name
      */
-    protected String             normMetric;
+    @Getter
+    @Setter
+    protected String metric;
 
     /**
-     * Consturcts a new normalizer for the given edge and which uses the named
-     * metric and range for the normalization of findings sets.
-     * 
-     * @param owner
-     *            Containing edge
-     * @param normMetric
-     *            Name of the normalization metric
-     * @param range
-     *            Normalization range
-     * @throws IllegalARgumentException
-     *             if the given owning edge is null, the metric name is null or
-     *             empty, or the range is null
+     * Constructs a new normalizer for the given edge and which uses the named
+     * name and range for the normalization of findings sets.
+     *
+     * @param owner      Containing edge
+     * @param normMetric Name of the normalization name
+     * @param range      Normalization range
+     * @throws IllegalArgumentException if the given owning edge is null, the name name is null or
+     *                                  empty, or the range is null
      */
-    public Normalizer(final Edge owner, final String normMetric, final NormalizationRange range)
-    {
-        if (owner == null)
-        {
+    public Normalizer(final Edge owner, final String normMetric, NormalizationRange range) {
+        if (owner == null) {
             throw new IllegalArgumentException("Normalizer owner cannot be null.");
         }
 
-        if (normMetric == null || normMetric.isEmpty())
-        {
-            throw new IllegalArgumentException("Normalization metric name cannot be null or empty");
-        }
-
-        if (range == null)
-        {
-            throw new IllegalArgumentException("Normalization Range cannot be null");
+        if (range == null) {
+            range = NormalizationRange.NA;
         }
 
         this.owner = owner;
         this.range = range;
-        this.normMetric = normMetric;
-    }
-
-    /**
-     * @return Range of normalization
-     */
-    public NormalizationRange getNormalizationRange()
-    {
-        return range;
-    }
-
-    /**
-     * @return Name of the normalization metric
-     */
-    public String getMetric()
-    {
-        return normMetric;
+        this.metric = normMetric;
     }
 
     /**
      * Conduct the normalization of the given set of findings.
-     * 
-     * @param findings
-     *            Finding set to normalize
+     *
+     * @param findings Finding set to normalize
      * @return normalized value for the findings set, representing the
-     *         proportion of the system affected by the given findings set.
+     * proportion of the system affected by the given findings set.
      */
-    public abstract BigDecimal normalize(Set<Finding> findings);
+    public abstract double normalize(List<Finding> findings);
 }

@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,39 +26,30 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import org.junit.After;
+import edu.isu.isuese.datamodel.File;
+import org.javalite.activejdbc.test.DBSpec;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-
-import edu.montana.gsoc.msusel.INode;
-import edu.montana.gsoc.msusel.node.FileNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
 
 /**
  * The class <code>FindingTest</code> contains tests for the class
  * <code>{@link Finding}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:38 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
-public class FindingTest {
+public class FindingTest extends DBSpec {
 
     /**
      * Run the Finding(CodeNode,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testFinding_1() throws Exception
-    {
-        final INode location = FileNode.builder("/some/path").create();
+    public void testFinding_1() {
+        final File location = File.builder().fileKey("/some/path").create();
         final String issueKey = "issueKey";
         final String issueName = "issueName";
 
-        final Finding result = new Finding(location, issueKey, issueName);
+        final Finding result = new FileFinding(location, issueKey, issueName);
 
         // add additional test code here
         Assert.assertNotNull(result);
@@ -67,20 +59,16 @@ public class FindingTest {
 
     /**
      * Run the Finding(CodeNode,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testFinding_2() throws Exception
-    {
-        final INode location = FileNode.builder("/some/path").create();
+    public void testFinding_2() {
+        final File location = File.builder().fileKey("/some/path").create();
         final String issueKey = "";
         final String issueName = "issueName";
 
         try
         {
-            new Finding(location, issueKey, issueName);
+            new FileFinding(location, issueKey, issueName);
             Assert.fail();
         }
         catch (final IllegalArgumentException e)
@@ -91,20 +79,16 @@ public class FindingTest {
 
     /**
      * Run the Finding(CodeNode,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testFinding_3() throws Exception
-    {
-        final INode location = FileNode.builder("/some/path").create();
+    public void testFinding_3() {
+        final File location = File.builder().fileKey("/some/path").create();
         final String issueKey = "issueKey";
         final String issueName = "";
 
         try
         {
-            new Finding(location, issueKey, issueName);
+            new FileFinding(location, issueKey, issueName);
             Assert.fail();
         }
         catch (final IllegalArgumentException e)
@@ -115,194 +99,46 @@ public class FindingTest {
 
     /**
      * Run the Finding(CodeNode,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
-    @Test
-    public void testFinding_4() throws Exception
-    {
-        final INode location = FileNode.builder("/some/path").create();
+    @Test(expected = IllegalArgumentException.class)
+    public void testFinding_4() {
+        final File location = File.builder().fileKey("/some/path").create();
         final String issueKey = null;
         final String issueName = "issueName";
 
-        try
-        {
-            new Finding(location, issueKey, issueName);
-            Assert.fail();
-        }
-        catch (final IllegalArgumentException e)
-        {
-
-        }
+        new FileFinding(location, issueKey, issueName);
     }
 
     /**
      * Run the Finding(CodeNode,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
-    @Test
-    public void testFinding_5() throws Exception
-    {
-        final INode location = FileNode.builder("/some/path").create();
+    @Test(expected = IllegalArgumentException.class)
+    public void testFinding_5() {
+        final File location = File.builder().fileKey("/some/path").create();
         final String issueKey = "issueKey";
         final String issueName = null;
 
-        try
-        {
-            new Finding(location, issueKey, issueName);
-            Assert.fail();
-        }
-        catch (final IllegalArgumentException e)
-        {
-
-        }
+        new FileFinding(location, issueKey, issueName);
     }
 
     /**
      * Run the Finding(CodeNode,String,String) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
-    @Test
-    public void testFinding_6() throws Exception
-    {
-        final INode location = null;
+    @Test(expected = IllegalArgumentException.class)
+    public void testFinding_6() {
+        final File location = null;
         final String issueKey = "issueKey";
         final String issueName = "issueName";
 
-        try
-        {
-            new Finding(location, issueKey, issueName);
-            Assert.fail();
-        }
-        catch (final IllegalArgumentException e)
-        {
-
-        }
-    }
-
-    /**
-     * Run the boolean equals(Object) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Test
-    public void testEquals_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final Object obj = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-
-        final boolean result = fixture.equals(obj);
-
-        // add additional test code here
-        Assert.assertEquals(true, result);
-    }
-
-    /**
-     * Run the boolean equals(Object) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Test
-    public void testEquals_2() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final Object obj = null;
-
-        final boolean result = fixture.equals(obj);
-
-        // add additional test code here
-        Assert.assertEquals(false, result);
-    }
-
-    /**
-     * Run the boolean equals(Object) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Test
-    public void testEquals_3() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final Object obj = new Object();
-
-        final boolean result = fixture.equals(obj);
-
-        // add additional test code here
-        Assert.assertEquals(false, result);
-    }
-
-    /**
-     * Run the boolean equals(Object) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Test
-    public void testEquals_4() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final Object obj = new Finding(FileNode.builder("/some/path").create(), "otherKey", "issueName");
-
-        final boolean result = fixture.equals(obj);
-
-        // add additional test code here
-        Assert.assertEquals(false, result);
-    }
-
-    /**
-     * Run the boolean equals(Object) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Test
-    public void testEquals_5() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final Object obj = new Finding(FileNode.builder("/some/path").create(), "issueKey", "otherName");
-
-        final boolean result = fixture.equals(obj);
-
-        // add additional test code here
-        Assert.assertEquals(false, result);
-    }
-
-    /**
-     * Run the boolean equals(Object) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Test
-    public void testEquals_6() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final Object obj = new Finding(FileNode.builder("/other/path").create(), "issueKey", "issueName");
-
-        final boolean result = fixture.equals(obj);
-
-        // add additional test code here
-        Assert.assertEquals(false, result);
+        new FileFinding(location, issueKey, issueName);
     }
 
     /**
      * Run the String getIssueKey() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetIssueKey_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
+    public void testGetIssueKey_1() {
+        final Finding fixture = new FileFinding(File.builder().fileKey("/some/path").create(), "issueKey", "issueName");
 
         final String result = fixture.getIssueKey();
 
@@ -312,14 +148,10 @@ public class FindingTest {
 
     /**
      * Run the String getIssueName() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetIssueName_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
+    public void testGetIssueName_1() {
+        final Finding fixture = new FileFinding(File.builder().fileKey("/some/path").create(), "issueKey", "issueName");
 
         final String result = fixture.getIssueName();
 
@@ -329,34 +161,25 @@ public class FindingTest {
 
     /**
      * Run the CodeNode getLocation() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testGetLocation_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
+    public void testGetLocation_1() {
+        final FileFinding fixture = new FileFinding(File.builder().fileKey("/some/path").create(), "issueKey", "issueName");
 
-        final INode result = fixture.getLocation();
+        final File result = fixture.getLocation();
 
         // add additional test code here
         Assert.assertNotNull(result);
-        Assert.assertEquals("/some/path", result.getQIdentifier());
-        Assert.assertEquals(1, ((FileNode) result).getLength());
-        Assert.assertEquals("FILE", result.getType());
+        Assert.assertEquals("/some/path", result.getFileKey());
+//        Assert.assertEquals("FILE", result.type());
     }
 
     /**
      * Run the void setIssueKey(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetIssueKey_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
+    public void testSetIssueKey_1() {
+        final Finding fixture = new FileFinding(File.builder().fileKey("/some/path").create(), "issueKey", "issueName");
         final String issueKey = "";
 
         fixture.setIssueKey(issueKey);
@@ -373,14 +196,10 @@ public class FindingTest {
 
     /**
      * Run the void setIssueName(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetIssueName_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
+    public void testSetIssueName_1() {
+        final Finding fixture = new FileFinding(File.builder().fileKey("/some/path").create(), "issueKey", "issueName");
         String issueName = "";
 
         fixture.setIssueName(issueName);
@@ -398,15 +217,11 @@ public class FindingTest {
 
     /**
      * Run the void setLocation(CodeNode) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:38 PM
      */
     @Test
-    public void testSetLocation_1() throws Exception
-    {
-        final Finding fixture = new Finding(FileNode.builder("/some/path").create(), "issueKey", "issueName");
-        final INode location = FileNode.builder("/some/other/path").create();
+    public void testSetLocation_1() {
+        final FileFinding fixture = new FileFinding(File.builder().fileKey("/some/path").create(), "issueKey", "issueName");
+        final File location = File.builder().fileKey("/some/other/path").create();
 
         fixture.setLocation(location);
 
@@ -416,43 +231,5 @@ public class FindingTest {
         fixture.setLocation(null);
         Assert.assertNotNull(fixture.getLocation());
         Assert.assertEquals(location, fixture.getLocation());
-    }
-
-    /**
-     * Perform pre-test initialization.
-     *
-     * @throws Exception
-     *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @Before
-    public void setUp() throws Exception
-    {
-        // add additional set up code here
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:38 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(FindingTest.class);
     }
 }

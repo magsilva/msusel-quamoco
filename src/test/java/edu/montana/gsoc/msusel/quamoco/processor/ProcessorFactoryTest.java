@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,39 +26,41 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor;
 
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.montana.gsoc.msusel.quamoco.graph.INode;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
+import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
+import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.montana.gsoc.msusel.quamoco.graph.INode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.FactorNode;
-import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
-import edu.montana.gsoc.msusel.quamoco.processor.AggregatorFactory;
-import edu.montana.gsoc.msusel.quamoco.processor.EvaluatorFactory;
-import edu.montana.gsoc.msusel.quamoco.processor.ProcessorFactory;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-
 /**
  * The class <code>ProcessorFactoryTest</code> contains tests for the class
  * <code>{@link ProcessorFactory}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:35 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class ProcessorFactoryTest {
+
 	/**
 	 * Run the ProcessorFactory getInstance(INode) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
 	 */
 	@Test
-	public void testGetInstance_1() throws Exception {
-		final INode node = new FactorNode(new DirectedSparseGraph<>(), "factor", "owner");
-		final INode node2 = new FactorNode(new DirectedSparseGraph<>(), "factor2", "owner");
+	public void testGetInstance_1() {
+	    final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+
+		final INode node = new FactorNode(graph, "factor", "owner");
+		final INode node2 = new FactorNode(graph, "factor2", "owner");
 
 		final ProcessorFactory result = ProcessorFactory.getInstance(node);
 		final ProcessorFactory result2 = ProcessorFactory.getInstance(node2);
@@ -70,15 +73,18 @@ public class ProcessorFactoryTest {
 
 	/**
 	 * Run the ProcessorFactory getInstance(INode) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
 	 */
 	@Test
-	public void testGetInstance_2() throws Exception {
-		final INode node = new MeasureNode(new DirectedSparseGraph<>(), "measure", "owner");
-		final INode node2 = new MeasureNode(new DirectedSparseGraph<>(), "measure2", "owner");
+	public void testGetInstance_2() {
+	    final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+
+		final INode node = new MeasureNode(graph, "measure", "owner");
+		final INode node2 = new MeasureNode(graph, "measure2", "owner");
 
 		final ProcessorFactory result = ProcessorFactory.getInstance(node);
 		final ProcessorFactory result2 = ProcessorFactory.getInstance(node2);
@@ -91,13 +97,9 @@ public class ProcessorFactoryTest {
 
 	/**
 	 * Run the ProcessorFactory getInstance(INode) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
 	 */
 	@Test
-	public void testGetInstance_3() throws Exception {
+	public void testGetInstance_3() {
 		final INode node = null;
 
 		final ProcessorFactory result = ProcessorFactory.getInstance(node);
@@ -108,15 +110,17 @@ public class ProcessorFactoryTest {
 
 	/**
 	 * Run the ProcessorFactory getInstance(INode) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
 	 */
 	@Test
-	public void testGetInstance_4() throws Exception {
-		final INode node = new MeasureNode(new DirectedSparseGraph<>(), "measure", "owner");
-		final INode node2 = new FactorNode(new DirectedSparseGraph<>(), "factor2", "owner");
+	public void testGetInstance_4() {
+	    final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+		final INode node = new MeasureNode(graph, "measure", "owner");
+		final INode node2 = new FactorNode(graph, "factor2", "owner");
 
 		final ProcessorFactory result = ProcessorFactory.getInstance(node);
 		final ProcessorFactory result2 = ProcessorFactory.getInstance(node2);
@@ -127,43 +131,5 @@ public class ProcessorFactoryTest {
 		Assert.assertTrue(result instanceof AggregatorFactory);
 		Assert.assertTrue(result2 instanceof EvaluatorFactory);
 		Assert.assertNotSame(result, result2);
-	}
-
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *             if the initialization fails for some reason
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
-	 */
-	@Before
-	public void setUp() throws Exception {
-		// add additional set up code here
-	}
-
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *             if the clean-up fails for some reason
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
-	 */
-	@After
-	public void tearDown() throws Exception {
-		// Add additional tear down code here
-	}
-
-	/**
-	 * Launch the test.
-	 *
-	 * @param args
-	 *            the command line arguments
-	 *
-	 * @generatedBy CodePro at 1/26/16 6:35 PM
-	 */
-	public static void main(final String[] args) {
-		new org.junit.runner.JUnitCore().run(ProcessorFactoryTest.class);
 	}
 }

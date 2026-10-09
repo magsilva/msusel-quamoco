@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,19 +26,17 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Finding;
 import edu.montana.gsoc.msusel.quamoco.processor.Processor;
+
+import java.util.List;
 
 /**
  * Defines the basic interface of nodes for a Distilled Quality Model processing
  * graph.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public interface INode {
 
@@ -89,21 +88,21 @@ public interface INode {
     /**
      * @return The value of the lower result derived for this node
      */
-    BigDecimal getLowerResult();
+    double getLowerResult();
 
     /**
      * @return The value of the upper result derived for this node
      */
-    BigDecimal getUpperResult();
+    double getUpperResult();
 
     /**
      * @return The set of values incoming into this node
      */
-    List<BigDecimal> getValues();
+    List<Double> getValues();
 
     /**
      * @return The set of findings incoming into this node
      */
-    Set<Finding> getFindings();
+    List<Finding> getFindings();
 
 }

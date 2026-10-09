@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +37,7 @@ import java.util.Properties;
  * by quamoco
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public final class MetricPropertiesReader {
 
@@ -53,9 +54,9 @@ public final class MetricPropertiesReader {
     }
 
     /**
-     * Static method to read the metric properties stored in the JAR
+     * Static method to read the name properties stored in the JAR
      * 
-     * @return array of metric properites.
+     * @return array of name properties.
      */
     public static String[] read()
     {
@@ -69,7 +70,7 @@ public final class MetricPropertiesReader {
         }
         catch (final IOException e)
         {
-            MetricPropertiesReader.LOG.warn("A problem occurred while loading the metric properties file.", e);
+            MetricPropertiesReader.LOG.warn("A problem occurred while loading the name properties file.", e);
         }
 
         return temp.split(",");

@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,41 +26,37 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.model.qm.InfluenceEffect;
+import edu.montana.gsoc.msusel.quamoco.model.InfluenceEffect;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Edge connecting a MeasureNode to a FactorNode for the purpose of passing
  * and normalizing findings sets.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class MeasureToFactorFindingsEdge extends WeightedRankedEdge implements InfluenceEdge, Normalizable {
 
     /**
      * Influence type
      */
+    @Getter
+    @Setter
     private String inf;
 
     /**
      * Constructs a new MeasureToFactorFindingsEdge with the given name
      * connecting the source and dest nodes.
-     * 
-     * @param name
-     *            Name of this edge
-     * @param src
-     *            Source node
-     * @param dest
-     *            Dest node
-     * @param effect
-     *            Influence type of this edge
+     *
+     * @param name   Name of this edge
+     * @param src    Source node
+     * @param dest   Dest node
+     * @param effect Influence type of this edge
      */
-    public MeasureToFactorFindingsEdge(final String name, final Node src, final Node dest, final InfluenceEffect effect)
-    {
+    public MeasureToFactorFindingsEdge(final String name, final Node src, final Node dest, final InfluenceEffect effect) {
         super(name, src, dest);
         inf = effect == null ? InfluenceType.POS : effect.toString();
     }
@@ -68,46 +65,35 @@ public class MeasureToFactorFindingsEdge extends WeightedRankedEdge implements I
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
-    {
-        BigDecimal value = BigDecimal.ZERO;
+    public double getValue() {
+        double value = 0.0;
 
-        if (this.getRank().compareTo(value) == 0)
-            return value;
+        if (this.getRank() == 0 || Double.compare(this.getWeight(), 0.0) <= 0)
+            return 1.0;
 
-        value = norm.normalize(src.getFindings());
-
-        if (inf != null && inf.equals(InfluenceType.NEG))
-        {
-            value = (getMaxPoints().subtract(getMaxPoints().multiply(value)))
-                    .divide(getMaxPoints(), 15, RoundingMode.HALF_UP);
+        if (norm != null) {
+            value = norm.normalize(source.getFindings());
         }
 
-        if (usesLinearDist)
-        {
-            value = dist.calculate(getMaxPoints(), value);
+        if (inf != null) {
+            if (inf.equals(InfluenceType.NEG)) {
+                value = (getMaxPoints() - (value * getMaxPoints()));
+            }
+
+            value = value / getMaxPoints();
         }
 
-        value = value.multiply(weight);
-        // value = thresholdValue(value);
+        if (usesLinearDist) {
+            value = dist.calculate(getMaxPoints(), value / getMaxPoints());
+        }
+
+        if (inf == null && !usesLinearDist)
+            value /= getMaxPoints();
+
+        value = thresholdValue(value, lowerBound, upperBound);
+        value = value * weight;
+
+
         return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getInf()
-    {
-        return inf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setInf(final String inf)
-    {
-        this.inf = inf;
     }
 }

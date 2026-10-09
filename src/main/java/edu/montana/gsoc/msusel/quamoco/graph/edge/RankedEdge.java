@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +26,16 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
-
 import edu.montana.gsoc.msusel.quamoco.processor.LinearDistribution;
 import edu.montana.gsoc.msusel.quamoco.processor.Normalizer;
 
 /**
- * Typing inteface for edges which have a ranking capability.
+ * Typing interface for edges which have a ranking capability.
  * FIXME Currently this also includes stuff with linear distributions, should
  * move this to another type
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public interface RankedEdge {
 
@@ -45,14 +44,14 @@ public interface RankedEdge {
      * 
      * @return the lowerBound
      */
-    BigDecimal getLowerBound();
+    double getLowerBound();
 
     /**
      * FIXME move to another type
      * 
      * @return the upperBound
      */
-    BigDecimal getUpperBound();
+    double getUpperBound();
 
     /**
      * FIXME move to another type
@@ -60,7 +59,7 @@ public interface RankedEdge {
      * @param lowerBound
      *            the lowerBound to set
      */
-    void setLowerBound(BigDecimal lowerBound);
+    void setLowerBound(double lowerBound);
 
     /**
      * FIXME move to another type
@@ -68,7 +67,7 @@ public interface RankedEdge {
      * @param upperBound
      *            the upperBound to set
      */
-    void setUpperBound(BigDecimal upperBound);
+    void setUpperBound(double upperBound);
 
     /**
      * FIXME move to WeightedEdge
@@ -76,7 +75,7 @@ public interface RankedEdge {
      * @param weight
      *            the weight to set
      */
-    void setWeight(BigDecimal weight);
+    void setWeight(double weight);
 
     /**
      * FIXME move to normalizable
@@ -90,16 +89,16 @@ public interface RankedEdge {
      * FIXME move to another type
      * 
      * @param maximumPoints
-     *            New value of Maximum ponts
+     *            New value of Maximum points
      */
-    void setMaxPoints(BigDecimal maximumPoints);
+    void setMaxPoints(double maximumPoints);
 
     /**
      * FIXME move to another type
      * 
      * @return Maximum points
      */
-    BigDecimal getMaxPoints();
+    double getMaxPoints();
 
     /**
      * FIXME move to another type
@@ -142,11 +141,11 @@ public interface RankedEdge {
      * @param rank
      *            The new rank of this RankedEdge
      */
-    void setRank(BigDecimal rank);
+    Edge setRank(int rank);
 
     /**
      * @return The current rank of this RankedEdge
      */
-    BigDecimal getRank();
+    int getRank();
 
 }

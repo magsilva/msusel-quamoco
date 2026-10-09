@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,19 +26,17 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor.aggregators;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import edu.montana.gsoc.msusel.quamoco.processor.Aggregator;
+
+import java.util.List;
 
 /**
  * A value based aggregator for measures with type NUMBER. Simply this collects
  * the incoming values and returns the arithmetic mean of the set.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class NumberMeanAggregator extends Aggregator {
 
@@ -56,20 +55,20 @@ public class NumberMeanAggregator extends Aggregator {
      * {@inheritDoc}
      */
     @Override
-    protected BigDecimal aggregate(final List<BigDecimal> values)
+    protected double aggregate(final List<Double> values)
     {
-        BigDecimal total = BigDecimal.ZERO;
+        double total = 0.0;
         if (values == null || values.isEmpty())
         {
-            return BigDecimal.ZERO;
+            return 0.0;
         }
 
-        for (final BigDecimal value : values)
+        for (final double value : values)
         {
-            total = total.add(value);
+            total = total + value;
         }
 
-        return total.divide(new BigDecimal(values.size()), 15, RoundingMode.HALF_UP);
+        return total / values.size();
     }
 
 }

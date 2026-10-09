@@ -6,7 +6,30 @@ This project is an implementation of the Quamoco quality evaluation framework. C
 * Java
 * C#
 
-Beyond the Java and C# models, we intend to develop several other models based on QMOOD, SIG, ColumbusQM, and SQALE quality models. We have also included an extended quality model for both Java and C# (extending their models) which includes enhanced security analysis to meet RMF compliance.
+Beyond the Java and C# models, we intend to develop several other models based on QMOOD, SIG, ColumbusQM, and SQALE quality models.
+We have also included an extended quality model for both Java and C# (extending their models) which includes enhanced security analysis to
+meet RMF compliance.
+
+## Installing Maven
+
+This project uses the Maven wrapper so that you do not need to install maven manually.
+The first time you go to build this project, simply execute the following command:
+
+```
+./mvnw clean install -Dmaven.test.skip=true
+```
+or for windows:
+```
+.\mvnw.cmd clean install -Dmaven.test.skip=true
+```
+
+## Generating the Site
+
+This project's site can be generated using the following command:
+
+```
+./mvnw clean site -Dmaven.test.skip=true
+```
 
 ## Project Goals
 * Calculate quality using a Quamoco Quality Model.

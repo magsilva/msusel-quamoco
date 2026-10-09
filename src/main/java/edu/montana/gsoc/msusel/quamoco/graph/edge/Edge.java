@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +26,15 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
+import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
+
 import java.util.List;
 
 /**
  * The interface for edges used in the Quamoco processing graph.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public interface Edge {
 
@@ -52,7 +54,7 @@ public interface Edge {
      *
      * @return The value
      */
-    BigDecimal getValue();
+    double getValue();
 
     /**
      * Sets the identifying number for this edge to the given value. Note that
@@ -66,5 +68,9 @@ public interface Edge {
     /**
      * @return The set of values provided by the incoming side of the edge
      */
-    List<BigDecimal> getValues();
+    List<Double> getValues();
+
+    Node getSource();
+
+    Node getDest();
 }

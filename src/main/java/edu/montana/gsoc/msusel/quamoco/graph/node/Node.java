@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,82 +26,91 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
+import com.google.common.graph.EndpointPair;
+import com.google.common.graph.MutableNetwork;
 import edu.montana.gsoc.msusel.quamoco.graph.INode;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.processor.Processor;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
 
 /**
  * Abstract base class for the nodes in the distilled quality model processing
  * graph.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
+@EqualsAndHashCode(of = {"name", "ownedBy"})
+@ToString(of = "name")
 public abstract class Node implements INode {
 
     /**
      * Graph to which this node belongs
      */
-    transient protected DirectedSparseGraph<Node, Edge> graph;
+    @Getter
+    @Setter
+    protected MutableNetwork<Node, Edge> graph;
     /**
      * Value associated with node after evaluation
      */
-    protected BigDecimal                                value       = BigDecimal.ZERO;
+    protected double value = 0.0;
     /**
      * lower result of this node (min of all incoming values)
      */
-    protected BigDecimal                                lowerResult = BigDecimal.ZERO;
+    protected double lowerResult = 0.0;
     /**
      * upper result of this node (max of all incoming values)
      */
-    protected BigDecimal                                upperResult = BigDecimal.ONE;
+    protected double upperResult = 1.0;
     /**
      * fully qualified identifier of the quamoco model entity from which this
      * node was derived
      */
-    protected String                                    ownedBy;
+    @Getter
+    protected String ownedBy;
     /**
      * name of this node
      */
-    protected String                                    name;
+    @Getter
+    protected String name;
     /**
      * description of this node
      * TODO remove this
      */
-    protected String                                    description;
+    @Getter
+    protected String description;
     /**
      * The process associated with this node, which facilitates the evaluation
      */
-    protected Processor                                 processor;
+    @Getter
+    @Setter
+    protected Processor processor;
     /**
      * Boolean flag indicating that this node has already successfully been
      * calculated.
      */
-    protected boolean                                   calculated;
+    @Getter
+    protected boolean calculated;
 
     /**
      * Constructs a new Node which is contained in the given graph,
      * identified by the given name, extracted from the quamoco model entity
      * with
      * the given identifier.
-     * 
-     * @param graph
-     *            Graph to which this node belongs
+     *
      * @param name
      *            Identifier of this node
      * @param owner
      *            Identifier of the quamoco model entity this node came from
      */
-    public Node(final DirectedSparseGraph<Node, Edge> graph, final String name, final String owner)
-    {
-        if (name == null || name.isEmpty() || owner == null || owner.isEmpty())
-        {
+    public Node(MutableNetwork<Node, Edge> graph, final String name, final String owner) {
+        if (name == null || name.isEmpty() || owner == null || owner.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
@@ -112,45 +122,29 @@ public abstract class Node implements INode {
     }
 
     /**
-     * {@inheritDoc}
+     * Constructs a new Node which is contained in the given graph,
+     * identified by the given name, extracted from the quamoco model entity
+     * with
+     * the given identifier.
+     *
+     * @param name
+     *            Identifier of this node
+     * @param owner
+     *            Identifier of the quamoco model entity this node came from
      */
-    @Override
-    public String getDescription()
-    {
-        return description;
-    }
-
-    /**
-     * @return The graph to which this node belongs
-     */
-    public DirectedSparseGraph<Node, Edge> getGraph()
-    {
-        return graph;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getOwnedBy()
-    {
-        return ownedBy;
+    public Node(final String name, final String owner) {
+        this(null, name, owner);
     }
 
     /**
      * @return The evaluated value of this node, which is dependent on all
      *         incoming nodes.
      */
-    public abstract BigDecimal getValue();
+    public abstract double getValue();
+
+    protected void setValue(double value) {
+        this.value = value;
+    }
 
     /**
      * @return The xml tag associated with node
@@ -161,14 +155,10 @@ public abstract class Node implements INode {
      * {@inheritDoc}
      */
     @Override
-    public void setDescription(final String description)
-    {
-        if (description == null)
-        {
+    public void setDescription(final String description) {
+        if (description == null) {
             this.description = "";
-        }
-        else
-        {
+        } else {
             this.description = description;
         }
     }
@@ -177,10 +167,8 @@ public abstract class Node implements INode {
      * {@inheritDoc}
      */
     @Override
-    public void setName(final String name)
-    {
-        if (name == null || name.isEmpty())
-        {
+    public void setName(final String name) {
+        if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
@@ -191,10 +179,8 @@ public abstract class Node implements INode {
      * {@inheritDoc}
      */
     @Override
-    public void setOwnedBy(final String ownedBy)
-    {
-        if (ownedBy == null || ownedBy.isEmpty())
-        {
+    public void setOwnedBy(final String ownedBy) {
+        if (ownedBy == null || ownedBy.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
@@ -205,96 +191,18 @@ public abstract class Node implements INode {
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
-        return name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Processor getProcessor()
-    {
-        return processor;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setProcessor(final Processor processor)
-    {
-        this.processor = processor;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<BigDecimal> getValues()
-    {
-        final List<BigDecimal> list = Lists.newArrayList();
+    public List<Double> getValues() {
+        final List<Double> list = Lists.newArrayList();
         list.add(getValue());
 
         return list;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((ownedBy == null) ? 0 : ownedBy.hashCode());
-        return result;
+    public Node getOpposite(Edge e) {
+        EndpointPair<Node> pair = graph.incidentNodes(e);
+        if (pair.target().equals(this))
+            return pair.source();
+        else
+            return pair.target();
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        Node other = (Node) obj;
-        if (name == null)
-        {
-            if (other.name != null)
-            {
-                return false;
-            }
-        }
-        else if (!name.equals(other.name))
-        {
-            return false;
-        }
-        if (ownedBy == null)
-        {
-            if (other.ownedBy != null)
-            {
-                return false;
-            }
-        }
-        else if (!ownedBy.equals(other.ownedBy))
-        {
-            return false;
-        }
-        return true;
-    }
-
 }

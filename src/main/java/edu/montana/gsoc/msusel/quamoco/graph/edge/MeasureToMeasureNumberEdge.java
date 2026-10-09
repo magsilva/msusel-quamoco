@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +26,6 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 
 /**
@@ -35,14 +33,14 @@ import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
  * than FINDINGS) and is only concerned with the aggregation of these values.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class MeasureToMeasureNumberEdge extends WeightedRankedEdge {
 
     /**
      * Constructs a new MeasureToMeasureNumberEdge with the given name
      * connecting the source and dest nodes.
-     * 
+     *
      * @param name
      *            Name of this edge
      * @param src
@@ -50,8 +48,7 @@ public class MeasureToMeasureNumberEdge extends WeightedRankedEdge {
      * @param dest
      *            Dest node
      */
-    public MeasureToMeasureNumberEdge(final String name, final Node src, final Node dest)
-    {
+    public MeasureToMeasureNumberEdge(final String name, final Node src, final Node dest) {
         super(name, src, dest);
     }
 
@@ -59,25 +56,16 @@ public class MeasureToMeasureNumberEdge extends WeightedRankedEdge {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
-    {
-        BigDecimal value = BigDecimal.ZERO;
+    public double getValue() {
+        double value = 0.0;
 
-        if (this.getRank().compareTo(value) == 0)
-            return value;
+        value = source.getValue();
 
-        if (usesLinearDist)
-        {
-            BigDecimal proportion = src.getValue();
-            // if (proportion <= 1.0) {
-            // proportion = proportion * getMaxPoints();
-            // }
-            value = dist.calculate(getMaxPoints(), proportion.divide(getMaxPoints(), 15, RoundingMode.HALF_UP));
+        if (usesLinearDist) {
+            value = dist.calculate(getMaxPoints(), value / getMaxPoints());
         }
-        else
-        {
-            value = src.getValue().multiply(weight);
-        }
+
+        value = value * weight;
 
         return value;
     }

@@ -2,8 +2,9 @@
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,28 +26,21 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.node;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.math.BigDecimal;
-
-import org.junit.After;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
+import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
-import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
-import edu.montana.gsoc.msusel.quamoco.graph.node.ValueNode;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The class <code>ValueNodeTest</code> contains tests for the class
  * <code>{@link ValueNode}</code>.
  *
- * @generatedBy CodePro at 5/30/15 3:38 PM
- * @author isaac
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class ValueNodeTest {
 
@@ -55,14 +49,15 @@ public class ValueNodeTest {
     /**
      * Run the ValueNode(DirectedSparseGraph<Node,Edge>,String,String,String)
      * constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testValueNode_1() throws Exception
-    {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+    public void testValueNode_1() {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final String key = "node";
         final String owner = "owner";
         final String tool = "tool";
@@ -72,7 +67,7 @@ public class ValueNodeTest {
         // TODO: add additional test code here
         assertNotNull(result);
         assertEquals("tool", result.getTool());
-        assertEquals(BigDecimal.ONE, result.getValue());
+        assertEquals(0.0, result.getValue(), 0.001);
         assertEquals("node", result.getKey());
         assertEquals("owner", result.getOwnedBy());
         assertEquals("", result.getDescription());
@@ -82,25 +77,25 @@ public class ValueNodeTest {
     /**
      * Run the ValueNode(DirectedSparseGraph
      * <Node,Edge>,String,String,String,long) constructor test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testValueNode_2() throws Exception
-    {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+    public void testValueNode_2() {
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final String key = "node";
         final String owner = "owner";
         final String tool = "tool";
-        final long id = 1L;
 
         final ValueNode result = new ValueNode(graph, key, owner, tool);
 
         // TODO: add additional test code here
         assertNotNull(result);
         assertEquals("tool", result.getTool());
-        assertEquals(BigDecimal.ONE, result.getValue());
+        assertEquals(0.0, result.getValue(), 0.001);
         assertEquals("node", result.getKey());
         assertEquals("owner", result.getOwnedBy());
         assertEquals("", result.getDescription());
@@ -109,13 +104,9 @@ public class ValueNodeTest {
 
     /**
      * Run the String getKey() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testGetKey_1() throws Exception
-    {
+    public void testGetKey_1() {
         final String result = fixture.getKey();
 
         // TODO: add additional test code here
@@ -124,13 +115,9 @@ public class ValueNodeTest {
 
     /**
      * Run the String getTool() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testGetTool_1() throws Exception
-    {
+    public void testGetTool_1() {
         final String result = fixture.getTool();
 
         // TODO: add additional test code here
@@ -139,57 +126,40 @@ public class ValueNodeTest {
 
     /**
      * Run the BigDecimal getValue() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Test
-    public void testGetValue_1() throws Exception
-    {
-        fixture.addValue(new BigDecimal(1));
-        fixture.addValue(new BigDecimal(1));
-        fixture.addValue(new BigDecimal(1));
-        fixture.addValue(new BigDecimal(-2));
+    public void testGetValue_1() {
+        fixture.addValue(1.0);
+        fixture.addValue(1.0);
+        fixture.addValue(1.0);
+        fixture.addValue(-2.0);
 
-        final BigDecimal result = fixture.getValue();
+        final double result = fixture.getValue();
 
         // TODO: add additional test code here
-        assertEquals(BigDecimal.ONE, result);
+        assertEquals(1.0, result, 0.001);
     }
 
     /**
      * Run the void setKey(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
-    @Test
-    public void testSetKey_1() throws Exception
-    {
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetKey_1() {
         String key = "";
 
-        try
-        {
-            fixture.setKey(key);
-            fail();
-        }
-        catch (final IllegalArgumentException e)
-        {
+        fixture.setKey(key);
+    }
 
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetKey_2() {
+        String key = null;
 
-        key = null;
-        try
-        {
-            fixture.setKey(key);
-            fail();
-        }
-        catch (final IllegalArgumentException e)
-        {
+        fixture.setKey(key);
+    }
 
-        }
-
-        key = "other";
+    @Test
+    public void testSetKey() {
+        String key = "other";
         fixture.setKey(key);
 
         // TODO: add additional test code here
@@ -201,37 +171,17 @@ public class ValueNodeTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:38 PM
      */
     @Before
     public void setUp() throws Exception
     {
-        fixture = new ValueNode(new DirectedSparseGraph<>(), "node", "owner", "tool");
-        fixture.graph = new DirectedSparseGraph<>();
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 5/30/15 3:38 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // TODO: add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 5/30/15 3:38 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(ValueNodeTest.class);
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
+        fixture = new ValueNode(graph, "node", "owner", "tool");
+        fixture.graph = graph;
     }
 }

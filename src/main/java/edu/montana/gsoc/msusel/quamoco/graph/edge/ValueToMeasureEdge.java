@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +26,15 @@
  */
 package edu.montana.gsoc.msusel.quamoco.graph.edge;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
+
+import java.util.List;
 
 /**
  * Edge which connects ValueNodes to MeasureNodes.
  *
  * @author Isaac Griffith
- * @version 1.1.1
+ * @version 1.3.0
  */
 public class ValueToMeasureEdge extends AbstractEdge {
 
@@ -58,18 +58,18 @@ public class ValueToMeasureEdge extends AbstractEdge {
      * {@inheritDoc}
      */
     @Override
-    public BigDecimal getValue()
+    public double getValue()
     {
-        return src.getValue();
+        return source.getValue();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<BigDecimal> getValues()
+    public List<Double> getValues()
     {
-        return src.getValues();
+        return source.getValues();
     }
 
 }

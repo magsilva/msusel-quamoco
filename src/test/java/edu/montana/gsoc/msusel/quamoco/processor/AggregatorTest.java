@@ -1,9 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * MSUSEL Quamoco Implementation
- * Copyright (c) 2015-2017 Montana State University, Gianforte School of Computing,
- * Software Engineering Laboratory
+ * Copyright (c) 2015-2019 Montana State University, Gianforte School of Computing,
+ * Software Engineering Laboratory and Idaho State University, Informatics and
+ * Computer Science, Empirical Software Engineering Laboratory
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,31 +26,24 @@
  */
 package edu.montana.gsoc.msusel.quamoco.processor;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.Edge;
 import edu.montana.gsoc.msusel.quamoco.graph.edge.ValueToMeasureEdge;
 import edu.montana.gsoc.msusel.quamoco.graph.node.MeasureNode;
 import edu.montana.gsoc.msusel.quamoco.graph.node.Node;
 import edu.montana.gsoc.msusel.quamoco.graph.node.ValueNode;
-import edu.montana.gsoc.msusel.quamoco.processor.Aggregator;
 import edu.montana.gsoc.msusel.quamoco.processor.aggregators.NumberMeanAggregator;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * The class <code>AggregatorTest</code> contains tests for the class
  * <code>{@link Aggregator}</code>.
  *
- * @generatedBy CodePro at 1/26/16 6:35 PM
- * @author fate
- * @version $Revision: 1.0 $
+ * @author Isaac Griffith
+ * @version 1.3.0
  */
 public class AggregatorTest {
 
@@ -57,17 +51,16 @@ public class AggregatorTest {
 
     /**
      * Run the double process() method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Test
     public void testProcess_1() throws Exception
     {
-        final BigDecimal result = fixture.process();
+        final double result = fixture.process();
 
         // add additional test code here
-        Assert.assertEquals(new BigDecimal(15).setScale(5, RoundingMode.HALF_UP), result);
+        double exp = 15;
+        double res = result;
+        Assert.assertEquals(exp, res, 0.001);
     }
 
     /**
@@ -75,43 +68,22 @@ public class AggregatorTest {
      *
      * @throws Exception
      *             if the initialization fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
      */
     @Before
     public void setUp() throws Exception
     {
-        final DirectedSparseGraph<Node, Edge> graph = new DirectedSparseGraph<>();
+        final MutableNetwork<Node, Edge> graph = NetworkBuilder.directed()
+                .allowsParallelEdges(true)
+                .allowsSelfLoops(false)
+                .expectedNodeCount(10000)
+                .expectedEdgeCount(10000)
+                .build();
         final ValueNode vn = new ValueNode(graph, "value", "issue", "issue");
         final MeasureNode mn = new MeasureNode(graph, "measure", "owner");
         fixture = new NumberMeanAggregator(mn);
         mn.setProcessor(fixture);
-        vn.addValue(new BigDecimal(10));
-        vn.addValue(new BigDecimal(20));
-        graph.addEdge(new ValueToMeasureEdge("v2m", vn, mn), vn, mn, EdgeType.DIRECTED);
-    }
-
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception
-     *             if the clean-up fails for some reason
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    @After
-    public void tearDown() throws Exception
-    {
-        // Add additional tear down code here
-    }
-
-    /**
-     * Launch the test.
-     *
-     * @param args
-     *            the command line arguments
-     * @generatedBy CodePro at 1/26/16 6:35 PM
-     */
-    public static void main(final String[] args)
-    {
-        new org.junit.runner.JUnitCore().run(AggregatorTest.class);
+        vn.addValue(10.0);
+        vn.addValue(20.0);
+        graph.addEdge(vn, mn, new ValueToMeasureEdge("v2m", vn, mn));
     }
 }
